@@ -1,17 +1,14 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import { 
-  CheckCircle, 
-  XCircle, 
+import {
+  CheckCircle,
+  XCircle,
   Clock,
-  Eye,
   UserCheck,
   CreditCard,
-  Building2
+  Building2,
+  Eye,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 
 const recentActivities = [
   {
@@ -22,7 +19,6 @@ const recentActivities = [
     reference: 'NIN_REF_001',
     user: 'Insurance Onboarding App',
     icon: UserCheck,
-    color: 'teal'
   },
   {
     id: 2,
@@ -32,7 +28,6 @@ const recentActivities = [
     reference: 'BVN_REF_002',
     user: 'Insurance Onboarding App',
     icon: CreditCard,
-    color: 'blue'
   },
   {
     id: 3,
@@ -42,7 +37,6 @@ const recentActivities = [
     reference: 'BVN_REF_003',
     user: 'Insurance Onboarding App',
     icon: CreditCard,
-    color: 'red'
   },
   {
     id: 4,
@@ -52,7 +46,6 @@ const recentActivities = [
     reference: 'CAC_REF_004',
     user: 'Fintech Ltd',
     icon: Building2,
-    color: 'purple'
   },
   {
     id: 5,
@@ -62,84 +55,246 @@ const recentActivities = [
     reference: 'NIN_REF_005',
     user: 'Banking Corp',
     icon: UserCheck,
-    color: 'teal'
   }
 ]
 
 export function RecentActivity() {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.3 }}
-      className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden"
+    <div
+      style={{
+        backgroundColor: "#ece9d8",
+        border: "2px solid",
+        borderColor: "#ffffff #808080 #808080 #ffffff",
+        boxShadow: "inset -1px -1px 0 #404040, inset 1px 1px 0 #dfdfdf",
+        overflow: "hidden",
+      }}
     >
-      <div className="p-6 border-b border-gray-100">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
-            <p className="text-sm text-gray-500 mt-1">Latest verifications from your apps</p>
-          </div>
-          <Button variant="ghost" size="sm" className="text-teal-600 hover:text-teal-700">
-            View All
-            <Eye className="w-4 h-4 ml-2" />
-          </Button>
-        </div>
+      {/* Title bar */}
+      <div
+        style={{
+          background: "linear-gradient(to right, #0a246a 0%, #3a6fc0 60%, #a6caef 100%)",
+          padding: "3px 8px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <span style={{ fontSize: 11, fontWeight: "bold", color: "#ffffff" }}>
+          Recent Activity — Latest verifications from your apps
+        </span>
+        <button
+          style={{
+            backgroundColor: "#ece9d8",
+            border: "2px solid",
+            borderColor: "#ffffff #808080 #808080 #ffffff",
+            boxShadow: "inset -1px -1px 0 #404040",
+            fontSize: 10,
+            padding: "1px 6px",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: 3,
+            color: "#000000",
+          }}
+        >
+          <Eye size={10} />
+          View All
+        </button>
       </div>
 
-      <div className="divide-y divide-gray-100">
-        {recentActivities.map((activity, index) => (
-          <motion.div
-            key={activity.id}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.05 }}
-            className="p-4 hover:bg-gray-50 transition-colors cursor-pointer group"
+      {/* Toolbar / column headers */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "32px 1fr 120px 150px 100px 80px",
+          backgroundColor: "#d4d0c8",
+          borderBottom: "2px solid",
+          borderBottomColor: "#808080 #ffffff #ffffff #808080",
+          padding: "2px 0",
+        }}
+      >
+        {["", "Service", "Status", "Application", "Reference", "Time"].map((col) => (
+          <div
+            key={col}
+            style={{
+              fontSize: 11,
+              fontWeight: "bold",
+              padding: "2px 6px",
+              color: "#000000",
+              borderRight: "1px solid #808080",
+              userSelect: "none",
+              cursor: "default",
+            }}
           >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className={`p-2 rounded-lg bg-${activity.color}-50`}>
-                  <activity.icon className={`w-5 h-5 text-${activity.color}-600`} />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <p className="font-medium text-gray-900">{activity.service}</p>
-                    <Badge 
-                      variant={activity.status === 'success' ? 'default' : 'destructive'}
-                      className={activity.status === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}
-                    >
-                      {activity.status === 'success' ? (
-                        <CheckCircle className="w-3 h-3 mr-1" />
-                      ) : (
-                        <XCircle className="w-3 h-3 mr-1" />
-                      )}
-                      {activity.status === 'success' ? 'Success' : 'Failed'}
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {activity.user} • Ref: {activity.reference}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1 text-xs text-gray-400">
-                  <Clock className="w-3 h-3" />
-                  <span>{activity.timestamp}</span>
-                </div>
-                <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity">
-                  View Details
-                </Button>
-              </div>
-            </div>
-          </motion.div>
+            {col}
+          </div>
         ))}
       </div>
 
-      {recentActivities.length === 0 && (
-        <div className="p-8 text-center">
-          <p className="text-gray-500">No recent activity</p>
-        </div>
-      )}
-    </motion.div>
+      {/* Table rows */}
+      <div>
+        {recentActivities.map((activity, index) => (
+          <div
+            key={activity.id}
+            style={{
+              display: "grid",
+              gridTemplateColumns: "32px 1fr 120px 150px 100px 80px",
+              backgroundColor: index % 2 === 0 ? "#ffffff" : "#f0efe8",
+              borderBottom: "1px solid #e0e0e0",
+              alignItems: "center",
+              cursor: "pointer",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLDivElement).style.backgroundColor = "#0a246a";
+              const spans = (e.currentTarget as HTMLDivElement).querySelectorAll('span, div');
+              spans.forEach((el) => {
+                (el as HTMLElement).style.color = "#ffffff";
+              });
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLDivElement).style.backgroundColor = index % 2 === 0 ? "#ffffff" : "#f0efe8";
+              const spans = (e.currentTarget as HTMLDivElement).querySelectorAll('span, div');
+              spans.forEach((el) => {
+                (el as HTMLElement).style.color = "";
+              });
+            }}
+          >
+            {/* Icon cell */}
+            <div
+              style={{
+                padding: "3px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRight: "1px solid #e0e0e0",
+              }}
+            >
+              <activity.icon size={14} color="#0a246a" />
+            </div>
+
+            {/* Service name */}
+            <div
+              style={{
+                padding: "3px 6px",
+                fontSize: 11,
+                fontWeight: "bold",
+                borderRight: "1px solid #e0e0e0",
+              }}
+            >
+              {activity.service}
+            </div>
+
+            {/* Status */}
+            <div
+              style={{
+                padding: "3px 6px",
+                borderRight: "1px solid #e0e0e0",
+                display: "flex",
+                alignItems: "center",
+                gap: 4,
+              }}
+            >
+              <span
+                style={{
+                  fontSize: 10,
+                  padding: "1px 4px",
+                  backgroundColor:
+                    activity.status === 'success' ? "#008000" : "#cc0000",
+                  color: "#ffffff",
+                  border: `1px solid ${activity.status === 'success' ? "#005500" : "#880000"}`,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 2,
+                }}
+              >
+                {activity.status === 'success' ? (
+                  <CheckCircle size={9} />
+                ) : (
+                  <XCircle size={9} />
+                )}
+                {activity.status === 'success' ? 'Success' : 'Failed'}
+              </span>
+            </div>
+
+            {/* Application */}
+            <div
+              style={{
+                padding: "3px 6px",
+                fontSize: 11,
+                color: "#444444",
+                borderRight: "1px solid #e0e0e0",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {activity.user}
+            </div>
+
+            {/* Reference */}
+            <div
+              style={{
+                padding: "3px 6px",
+                fontSize: 10,
+                fontFamily: "Courier New, monospace",
+                color: "#000066",
+                borderRight: "1px solid #e0e0e0",
+              }}
+            >
+              {activity.reference}
+            </div>
+
+            {/* Time */}
+            <div
+              style={{
+                padding: "3px 6px",
+                fontSize: 10,
+                color: "#666666",
+                display: "flex",
+                alignItems: "center",
+                gap: 3,
+              }}
+            >
+              <Clock size={9} />
+              {activity.timestamp}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Status bar */}
+      <div
+        style={{
+          borderTop: "2px solid",
+          borderTopColor: "#808080",
+          boxShadow: "0 -1px 0 #dfdfdf",
+          backgroundColor: "#d4d0c8",
+          padding: "2px 8px",
+          display: "flex",
+          alignItems: "center",
+          gap: 16,
+          fontSize: 10,
+          color: "#444444",
+        }}
+      >
+        <span>{recentActivities.length} object(s)</span>
+        <span
+          style={{
+            borderLeft: "1px solid #808080",
+            paddingLeft: 8,
+          }}
+        >
+          {recentActivities.filter((a) => a.status === 'success').length} successful
+        </span>
+        <span
+          style={{
+            borderLeft: "1px solid #808080",
+            paddingLeft: 8,
+          }}
+        >
+          {recentActivities.filter((a) => a.status === 'failed').length} failed
+        </span>
+      </div>
+    </div>
   )
 }

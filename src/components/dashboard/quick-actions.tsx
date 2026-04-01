@@ -1,18 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { motion } from 'framer-motion'
-import { 
-  UserCheck, 
-  CreditCard, 
-  Building2, 
+import {
+  UserCheck,
+  CreditCard,
+  Building2,
   AlertTriangle,
   ArrowRight,
-  Sparkles,
-  Zap
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 
 const actions = [
   {
@@ -20,8 +15,6 @@ const actions = [
     description: 'Verify National Identity Number',
     icon: UserCheck,
     href: '/verifications/nin',
-    color: 'teal',
-    price: '₦80',
     popular: true
   },
   {
@@ -29,117 +22,198 @@ const actions = [
     description: 'Verify Bank Verification Number',
     icon: CreditCard,
     href: '/verifications/bvn',
-    color: 'blue',
-    price: '₦50'
   },
   {
     title: 'CAC Business Search',
     description: 'Search Nigerian businesses',
     icon: Building2,
     href: '/verifications/cac',
-    color: 'purple',
-    price: '₦150'
   },
   {
     title: 'PEP Screening',
     description: 'Politically Exposed Persons',
     icon: AlertTriangle,
     href: '/pep',
-    color: 'orange',
     comingSoon: true
   }
 ]
 
 export function QuickActions() {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.1 }}
-      className="bg-linear-to-br from-gray-50 to-white rounded-xl border border-gray-100 p-6 shadow-sm"
+    <div
+      style={{
+        backgroundColor: "#ece9d8",
+        border: "2px solid",
+        borderColor: "#ffffff #808080 #808080 #ffffff",
+        boxShadow: "inset -1px -1px 0 #404040, inset 1px 1px 0 #dfdfdf",
+        overflow: "hidden",
+      }}
     >
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-lg font-semibold text-gray-900">Quick Actions</h2>
-          <p className="text-sm text-gray-500 mt-1">Start a new verification in seconds</p>
-        </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-teal-50 rounded-lg">
-          <Zap className="w-4 h-4 text-teal-600" />
-          <span className="text-xs font-medium text-teal-600">Instant Results</span>
-        </div>
+      {/* Win2K group box title bar */}
+      <div
+        style={{
+          background: "linear-gradient(to right, #0a246a 0%, #3a6fc0 60%, #a6caef 100%)",
+          padding: "3px 8px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <span style={{ fontSize: 11, fontWeight: "bold", color: "#ffffff" }}>
+          Quick Actions — Start a new verification
+        </span>
+        <span
+          style={{
+            fontSize: 10,
+            backgroundColor: "#ece9d8",
+            color: "#0a246a",
+            padding: "0 6px",
+            border: "1px solid #808080",
+            fontWeight: "bold",
+          }}
+        >
+          ⚡ Instant Results
+        </span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {actions.map((action, index) => (
-          <motion.div
+      {/* Toolbar separator */}
+      <div
+        style={{
+          borderBottom: "1px solid #808080",
+          boxShadow: "0 1px 0 #ffffff",
+          margin: 0,
+        }}
+      />
+
+      {/* Action cards grid */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gap: 8,
+          padding: 8,
+        }}
+      >
+        {actions.map((action) => (
+          <Link
             key={action.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            whileHover={{ y: -4 }}
-            className="group"
+            href={action.comingSoon ? '#' : action.href}
+            style={{ textDecoration: "none", pointerEvents: action.comingSoon ? "none" : "auto" }}
           >
-            <Link href={action.comingSoon ? '#' : action.href}>
-              <div className={cn(
-                "relative h-full p-5 rounded-xl border transition-all duration-300",
-                action.comingSoon 
-                  ? "border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed" 
-                  : "border-gray-100 bg-white hover:border-teal-200 hover:shadow-lg cursor-pointer"
-              )}>
-                {action.popular && (
-                  <div className="absolute -top-2 -right-2">
-                    <Badge className="bg-linear-to-r from-teal-500 to-teal-600 text-white text-xs px-2 py-0.5">
-                      Popular
-                    </Badge>
-                  </div>
-                )}
-                
-                {action.comingSoon && (
-                  <div className="absolute top-3 right-3">
-                    <Badge className="bg-purple-100 text-purple-600 text-xs">
-                      Coming Soon
-                    </Badge>
-                  </div>
-                )}
-                
-                <div className="flex flex-col items-center text-center">
-                  <div className={cn(
-                    "p-3 rounded-xl mb-4 transition-all duration-300",
-                    action.comingSoon 
-                      ? "bg-gray-100" 
-                      : `bg-${action.color}-50 group-hover:scale-110 group-hover:shadow-md`
-                  )}>
-                    <action.icon className={cn(
-                      "w-8 h-8",
-                      action.comingSoon 
-                        ? "text-gray-400" 
-                        : `text-${action.color}-600`
-                    )} />
-                  </div>
-                  
-                  <h3 className="font-semibold text-gray-900 mb-2">{action.title}</h3>
-                  <p className="text-xs text-gray-500 mb-3 line-clamp-2">{action.description}</p>
-                  
-                  {!action.comingSoon && (
-                    <div className="flex items-center justify-between w-full mt-2 pt-2 border-t border-gray-100">
-                      {/* <span className="text-sm font-bold text-teal-600">{action.price}</span> */}
-                      <span className="text-xs text-teal-600 group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
-                        Verify
-                        <ArrowRight className="w-3 h-3" />
-                      </span>
-                    </div>
-                  )}
+            <div
+              style={{
+                backgroundColor: action.comingSoon ? "#d4d0c8" : "#ece9d8",
+                border: "2px solid",
+                borderColor: "#ffffff #808080 #808080 #ffffff",
+                boxShadow: "inset -1px -1px 0 #404040, inset 1px 1px 0 #dfdfdf",
+                padding: "8px",
+                textAlign: "center",
+                cursor: action.comingSoon ? "not-allowed" : "pointer",
+                opacity: action.comingSoon ? 0.6 : 1,
+                position: "relative",
+              }}
+              onMouseEnter={(e) => {
+                if (!action.comingSoon) {
+                  (e.currentTarget as HTMLDivElement).style.backgroundColor = "#d4d0c8";
+                  (e.currentTarget as HTMLDivElement).style.borderColor = "#808080 #ffffff #ffffff #808080";
+                  (e.currentTarget as HTMLDivElement).style.boxShadow = "inset 1px 1px 0 #404040, inset -1px -1px 0 #dfdfdf";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!action.comingSoon) {
+                  (e.currentTarget as HTMLDivElement).style.backgroundColor = "#ece9d8";
+                  (e.currentTarget as HTMLDivElement).style.borderColor = "#ffffff #808080 #808080 #ffffff";
+                  (e.currentTarget as HTMLDivElement).style.boxShadow = "inset -1px -1px 0 #404040, inset 1px 1px 0 #dfdfdf";
+                }
+              }}
+            >
+              {action.popular && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: -1,
+                    right: -1,
+                    backgroundColor: "#0a246a",
+                    color: "#ffffff",
+                    fontSize: 9,
+                    padding: "1px 4px",
+                    fontWeight: "bold",
+                    border: "1px solid #000033",
+                  }}
+                >
+                  ★ Popular
                 </div>
+              )}
+
+              {action.comingSoon && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: -1,
+                    right: -1,
+                    backgroundColor: "#7b3fc4",
+                    color: "#ffffff",
+                    fontSize: 9,
+                    padding: "1px 4px",
+                    fontWeight: "bold",
+                    border: "1px solid #5a2e99",
+                  }}
+                >
+                  Coming Soon
+                </div>
+              )}
+
+              {/* Icon */}
+              <div
+                style={{
+                  width: 32,
+                  height: 32,
+                  backgroundColor: "#d4d0c8",
+                  border: "1px solid #808080",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  margin: "0 auto 6px auto",
+                }}
+              >
+                <action.icon size={18} color={action.comingSoon ? "#808080" : "#0a246a"} />
               </div>
-            </Link>
-          </motion.div>
+
+              <div
+                style={{
+                  fontSize: 11,
+                  fontWeight: "bold",
+                  color: "#000000",
+                  marginBottom: 3,
+                }}
+              >
+                {action.title}
+              </div>
+              <div style={{ fontSize: 10, color: "#555555", marginBottom: 6 }}>
+                {action.description}
+              </div>
+
+              {!action.comingSoon && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 3,
+                    fontSize: 10,
+                    color: "#0a246a",
+                    borderTop: "1px solid #c0c0c0",
+                    paddingTop: 4,
+                    fontWeight: "bold",
+                  }}
+                >
+                  Verify Now <ArrowRight size={10} />
+                </div>
+              )}
+            </div>
+          </Link>
         ))}
       </div>
-    </motion.div>
+    </div>
   )
-}
-
-// Helper function
-function cn(...classes: (string | boolean | undefined)[]) {
-  return classes.filter(Boolean).join(' ')
 }
