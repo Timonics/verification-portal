@@ -2,54 +2,51 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* Define custom fonts */
+/* Windows 2000 / Luna theme */
 @theme inline {
-  /* Font families */
-  --font-sans: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --font-heading: var(--font-poppins), system-ui, sans-serif;
+  /* Font families - Tahoma is the authentic Win2K font */
+  --font-sans: Tahoma, "MS Sans Serif", Arial, sans-serif;
+  --font-mono: "Courier New", Courier, monospace;
+  --font-heading: Tahoma, "MS Sans Serif", Arial, sans-serif;
 
-  /* Color palette - Light theme first */
-  --color-primary: #0a0c1c;
+  /* Win2K Color palette */
+  --color-primary: #0a246a;           /* Classic Luna title bar dark blue */
   --color-primary-foreground: #ffffff;
-  --color-secondary: #0d9488;
+  --color-secondary: #1660a7;         /* Luna blue mid */
   --color-secondary-foreground: #ffffff;
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
-  --color-coming-soon: #8b5cf6;
+  --color-success: #008000;
+  --color-warning: #ff8c00;
+  --color-error: #cc0000;
+  --color-coming-soon: #7b3fc4;
 
-  /* Background colors */
-  --color-background: #f9fafb;
-  --color-card: #ffffff;
-  --color-card-foreground: #111827;
-  --color-muted: #f3f4f6;
-  --color-muted-foreground: #6b7280;
-  --color-border: #e5e7eb;
+  /* Win2K Surface colors */
+  --color-background: #3a6ea5;        /* Classic Win2K desktop blue */
+  --color-card: #ece9d8;              /* Luna button face / window bg */
+  --color-card-foreground: #000000;
+  --color-muted: #d4d0c8;             /* Classic Win2K gray surface */
+  --color-muted-foreground: #444444;
+  --color-border: #808080;
 
-  /* Border radius */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
+  /* Win2K specific tokens */
+  --color-win-surface: #ece9d8;       /* Window/panel background */
+  --color-win-highlight: #ffffff;     /* 3D highlight (top-left edges) */
+  --color-win-shadow: #808080;        /* 3D shadow (bottom-right edges) */
+  --color-win-dark-shadow: #404040;   /* Outer dark shadow */
+  --color-win-titlebar-start: #0a246a;
+  --color-win-titlebar-end: #a6caef;
+  --color-win-active-btn: #ece9d8;
+
+  /* Border radius - Win2K is mostly sharp/minimal */
+  --radius-sm: 0px;
+  --radius-md: 2px;
+  --radius-lg: 4px;
 
   /* Animation */
   --animate-shimmer: shimmer 2s infinite;
 }
 
 @keyframes shimmer {
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-/* Dark mode overrides */
-.dark {
-  --color-background: #0a0c1c;
-  --color-card: #1f2937;
-  --color-card-foreground: #f9fafb;
-  --color-muted: #374151;
-  --color-muted-foreground: #9ca3af;
-  --color-border: #374151;
+  100% { transform: translateX(100%); }
 }
 
 /* Base styles */
@@ -59,123 +56,231 @@
   }
 
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
   }
 
   body {
-    @apply bg-background text-card-foreground font-sans antialiased;
+    background-color: #3a6ea5;
+    color: #000000;
+    font-family: Tahoma, "MS Sans Serif", Arial, sans-serif;
+    font-size: 11px;
+    -webkit-font-smoothing: none;
+    font-smooth: never;
   }
 
-  /* Typography headings */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-heading;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: Tahoma, "MS Sans Serif", Arial, sans-serif;
+    font-weight: bold;
   }
 
-  /* Monospace for IDs and references */
-  code,
-  pre,
-  .mono {
-    @apply font-mono;
+  code, pre, .mono {
+    font-family: "Courier New", Courier, monospace;
   }
 }
 
-/* Custom scrollbar */
+/* Windows 2000 3D border utilities */
+.win-raised {
+  border-style: solid;
+  border-width: 1px;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  box-shadow: inset -1px -1px 0 #404040, inset 1px 1px 0 #dfdfdf;
+}
+
+.win-sunken {
+  border-style: solid;
+  border-width: 1px;
+  border-color: #808080 #ffffff #ffffff #808080;
+  box-shadow: inset 1px 1px 0 #404040, inset -1px -1px 0 #dfdfdf;
+}
+
+.win-panel {
+  background-color: #ece9d8;
+  border: 2px solid;
+  border-color: #ffffff #404040 #404040 #ffffff;
+  outline: 1px solid #808080;
+  outline-offset: -2px;
+}
+
+.win-button {
+  background-color: #ece9d8;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  box-shadow: inset 1px 1px 0 #dfdfdf;
+  font-family: Tahoma, "MS Sans Serif", Arial, sans-serif;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 2px 8px;
+  min-height: 23px;
+}
+
+.win-button:hover {
+  background-color: #f0efe8;
+}
+
+.win-button:active {
+  border-color: #808080 #ffffff #ffffff #808080;
+  box-shadow: inset -1px -1px 0 #dfdfdf;
+  padding: 3px 7px 1px 9px;
+}
+
+.win-button-primary {
+  background-color: #ece9d8;
+  border: 2px solid #0a246a;
+  box-shadow: inset 1px 1px 0 #ffffff, inset -1px -1px 0 #808080;
+  font-family: Tahoma, "MS Sans Serif", Arial, sans-serif;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 2px 8px;
+  min-height: 23px;
+  font-weight: bold;
+}
+
+/* Title bar gradient */
+.win-titlebar {
+  background: linear-gradient(to right, #0a246a 0%, #3a6fc0 60%, #a6caef 100%);
+  color: #ffffff;
+  font-family: Tahoma, "MS Sans Serif", Arial, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  text-shadow: 1px 1px 0 #000033;
+  padding: 3px 4px;
+  user-select: none;
+}
+
+/* Win2K scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 17px;
+  height: 17px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-muted);
-  border-radius: var(--radius-sm);
+  background: #d4d0c8;
+  border: 1px solid #808080;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-muted-foreground);
-  border-radius: var(--radius-sm);
+  background: #ece9d8;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  box-shadow: inset 1px 1px 0 #dfdfdf;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary);
+::-webkit-scrollbar-button {
+  background: #ece9d8;
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  display: block;
+  height: 17px;
+  width: 17px;
 }
 
-/* Smooth transitions */
+::-webkit-scrollbar-corner {
+  background: #d4d0c8;
+}
+
+/* No smooth transitions - Win2K is snappy */
 * {
-  transition-property: background-color, border-color, color, fill, stroke;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 200ms;
+  transition: none !important;
 }
 
-/* Glassmorphism utility */
-.glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.dark .glass {
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Focus rings for accessibility */
+/* Focus rings */
 *:focus-visible {
-  outline: 2px solid var(--color-secondary);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
+  outline: 1px dotted #000000;
+  outline-offset: 0px;
 }
 
-/* Custom animations */
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+/* Win2K status bar */
+.win-statusbar {
+  background: #ece9d8;
+  border-top: 1px solid #808080;
+  font-size: 11px;
+  padding: 2px 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.animate-float {
-  animation: float 3s ease-in-out infinite;
+/* Win2K group box */
+.win-groupbox {
+  border: 1px solid #808080;
+  padding: 8px;
+  position: relative;
+  margin-top: 8px;
+  background: #ece9d8;
 }
 
-/* Gradient text */
-.gradient-text {
-  background: linear-gradient(135deg, #0d9488 0%, #059669 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.win-groupbox-legend {
+  position: absolute;
+  top: -8px;
+  left: 8px;
+  background: #ece9d8;
+  padding: 0 4px;
+  font-size: 11px;
+  font-weight: bold;
 }
 
-.pattern-bg {
-  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  opacity: 0.5;
+/* Win2K table styles */
+.win-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 11px;
 }
 
-@keyframes blob {
-  0%,
-  100% {
-    transform: translate(0px, 0px) scale(1);
-  }
-  33% {
-    transform: translate(30px, -50px) scale(1.1);
-  }
-  66% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
+.win-table th {
+  background: #d4d0c8;
+  border: 1px solid #808080;
+  padding: 2px 6px;
+  text-align: left;
+  font-weight: bold;
 }
-.animate-blob {
-  animation: blob 7s infinite;
+
+.win-table td {
+  border: 1px solid #c8c8c8;
+  padding: 2px 6px;
 }
-.animation-delay-2000 {
-  animation-delay: 2s;
+
+.win-table tr:nth-child(even) td {
+  background: #f0f0f0;
 }
-.animation-delay-4000 {
-  animation-delay: 4s;
+
+.win-table tr:hover td {
+  background: #0a246a;
+  color: #ffffff;
+}
+
+/* Win2K listview selection */
+.win-listitem-selected {
+  background: #0a246a;
+  color: #ffffff;
+}
+
+/* Win2K badge */
+.win-badge-success {
+  background: #008000;
+  color: #ffffff;
+  padding: 1px 4px;
+  font-size: 10px;
+  border: 1px solid #005500;
+}
+
+.win-badge-error {
+  background: #cc0000;
+  color: #ffffff;
+  padding: 1px 4px;
+  font-size: 10px;
+  border: 1px solid #880000;
+}
+
+.win-badge-soon {
+  background: #7b3fc4;
+  color: #ffffff;
+  padding: 1px 4px;
+  font-size: 10px;
+  border: 1px solid #5a2e99;
+}
+
+/* Disable framer-motion visual effects for authentic feel */
+[data-projection-id] {
+  transform: none !important;
+  opacity: 1 !important;
 }

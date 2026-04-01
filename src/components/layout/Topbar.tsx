@@ -1,75 +1,256 @@
 "use client";
 
-import { Search, Bell, User, Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Search, Bell, User, ChevronDown } from "lucide-react";
+import { useState } from "react";
 
 export function Topbar() {
-  const { theme, setTheme } = useTheme();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-20 flex items-center justify-between h-16 px-6 bg-white border-b border-gray-200">
-      <div className="flex-1 max-w-md">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <Input
-            type="search"
-            placeholder="Search across logs..."
-            className="pl-9 pr-4"
-          />
+    <header
+      style={{
+        position: "sticky",
+        top: 0,
+        zIndex: 20,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        height: 48,
+        padding: "0 8px",
+        backgroundColor: "#ece9d8",
+        borderBottom: "2px solid",
+        borderBottomColor: "#808080",
+        boxShadow: "0 1px 0 #404040",
+        gap: 8,
+      }}
+    >
+      {/* Toolbar buttons area (left) */}
+      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+        {/* Win2K-style toolbar separator */}
+        <div
+          style={{
+            width: 1,
+            height: 22,
+            backgroundColor: "#808080",
+            margin: "0 2px",
+          }}
+        />
+        <div
+          style={{
+            width: 1,
+            height: 22,
+            backgroundColor: "#ffffff",
+            marginLeft: -3,
+            marginRight: 4,
+          }}
+        />
+
+        {/* Address-bar style search */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 0,
+          }}
+        >
+          <span
+            style={{
+              fontSize: 11,
+              color: "#000000",
+              marginRight: 4,
+              fontWeight: "bold",
+            }}
+          >
+            Search:
+          </span>
+          <div
+            style={{
+              position: "relative",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <input
+              type="text"
+              placeholder="Search across logs..."
+              style={{
+                width: 220,
+                height: 20,
+                padding: "1px 20px 1px 4px",
+                fontSize: 11,
+                fontFamily: "Tahoma, Arial, sans-serif",
+                backgroundColor: "#ffffff",
+                border: "2px solid",
+                borderColor: "#808080 #ffffff #ffffff #808080",
+                boxShadow: "inset 1px 1px 0 #404040",
+                outline: "none",
+                color: "#000000",
+              }}
+            />
+            <button
+              style={{
+                position: "absolute",
+                right: 0,
+                top: 0,
+                bottom: 0,
+                width: 20,
+                backgroundColor: "#ece9d8",
+                border: "none",
+                borderLeft: "1px solid #808080",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Search size={11} />
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="flex items-center space-x-4">
-        {/* <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-        >
-          <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-          <span className="sr-only">Toggle theme</span>
-        </Button> */}
+      {/* Right controls */}
+      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+        {/* Notification button */}
+        <div style={{ position: "relative" }}>
+          <button
+            className="win-button"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+              padding: "2px 6px",
+              minHeight: 22,
+              position: "relative",
+            }}
+          >
+            <Bell size={13} />
+            <span style={{ fontSize: 11 }}>Alerts</span>
+            {/* Red notification dot */}
+            <span
+              style={{
+                position: "absolute",
+                top: 2,
+                right: 2,
+                width: 6,
+                height: 6,
+                backgroundColor: "#cc0000",
+                borderRadius: "50%",
+                border: "1px solid #880000",
+              }}
+            />
+          </button>
+        </div>
 
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="w-5 h-5" />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
-        </Button>
+        {/* Separator */}
+        <div
+          style={{
+            width: 1,
+            height: 22,
+            backgroundColor: "#808080",
+            margin: "0 2px",
+          }}
+        />
+        <div
+          style={{
+            width: 1,
+            height: 22,
+            backgroundColor: "#ffffff",
+            marginLeft: -3,
+          }}
+        />
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-              <Avatar className="h-8 w-8">
-                <AvatarFallback className="bg-secondary/10 text-secondary">
-                  AD
-                </AvatarFallback>
-              </Avatar>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56" align="end" forceMount>
-            <DropdownMenuLabel className="font-normal">
-              <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">Admin User</p>
-                <p className="text-xs leading-none text-muted-foreground">
+        {/* User dropdown */}
+        <div style={{ position: "relative" }}>
+          <button
+            className="win-button"
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+              padding: "2px 6px",
+              minHeight: 22,
+            }}
+          >
+            {/* Win2K user icon */}
+            <div
+              style={{
+                width: 16,
+                height: 16,
+                backgroundColor: "#0a246a",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                border: "1px solid #808080",
+              }}
+            >
+              <User size={10} color="#ffffff" />
+            </div>
+            <span style={{ fontSize: 11 }}>Admin User</span>
+            <ChevronDown size={10} />
+          </button>
+
+          {dropdownOpen && (
+            <div
+              style={{
+                position: "absolute",
+                top: "100%",
+                right: 0,
+                backgroundColor: "#ece9d8",
+                border: "2px solid",
+                borderColor: "#ffffff #404040 #404040 #ffffff",
+                outline: "1px solid #808080",
+                minWidth: 160,
+                zIndex: 100,
+                boxShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+              }}
+            >
+              {/* Dropdown header */}
+              <div
+                style={{
+                  padding: "4px 8px 4px 8px",
+                  borderBottom: "1px solid #808080",
+                  backgroundColor: "#ece9d8",
+                }}
+              >
+                <div style={{ fontSize: 11, fontWeight: "bold" }}>
+                  Admin User
+                </div>
+                <div style={{ fontSize: 10, color: "#444444" }}>
                   admin@verifyhub.com
-                </p>
+                </div>
               </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Logout</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              {["Settings", "Logout"].map((item) => (
+                <button
+                  key={item}
+                  onClick={() => setDropdownOpen(false)}
+                  style={{
+                    display: "block",
+                    width: "100%",
+                    padding: "3px 16px",
+                    fontSize: 11,
+                    textAlign: "left",
+                    backgroundColor: "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                    color: "#000000",
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#0a246a";
+                    (e.currentTarget as HTMLButtonElement).style.color = "#ffffff";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
+                    (e.currentTarget as HTMLButtonElement).style.color = "#000000";
+                  }}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );
