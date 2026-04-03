@@ -289,7 +289,7 @@ export default function LandingPage() {
       </motion.section>
 
       {/* Stats Section */}
-      <section className="py-20">
+      {/* <section className="py-20">
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
@@ -340,7 +340,7 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Services Section */}
       <section
