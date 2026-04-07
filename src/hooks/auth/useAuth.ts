@@ -69,7 +69,7 @@ export function useVerify2FA() {
         // Update cache with user data
         queryClient.setQueryData(authKeys.user(), data.user);
 
-        localStorage.setItem("user-data", data.user);
+        localStorage.setItem("user-data", JSON.stringify(data.user));
         localStorage.setItem("user-role", data.user.roles[0]);
 
         toast.success("Successfully verified", {
@@ -122,7 +122,27 @@ export function useLogout() {
   return useMutation({
     mutationFn: authApi.logout,
     onSuccess: () => {
-      queryClient.clear(); // Clear all cached queries
+      // Clear React Query cache
+      queryClient.clear();
+
+      // Clear localStorage items used by the app
+      localStorage.removeItem("user-data");
+      localStorage.removeItem("user-role");
+      localStorage.removeItem("2fa_email"); // if stored in localStorage
+      // Add any other localStorage keys you have
+
+      // Clear sessionStorage items
+      sessionStorage.removeItem("2fa_email");
+      sessionStorage.removeItem("2fa_session_token");
+      sessionStorage.removeItem("2fa_role");
+      sessionStorage.removeItem("otpVerified");
+      // Add any other sessionStorage keys
+
+      // Optional: clear all storage if you prefer
+      // localStorage.clear();
+      // sessionStorage.clear();
+
+      // Redirect to login page
       router.push("/login");
     },
   });
