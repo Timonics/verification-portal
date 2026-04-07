@@ -17,7 +17,6 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useLogout } from "@/hooks/auth/useAuth";
 
 export function Topbar() {
-  const router = useRouter();
   const { mutate: logout } = useLogout();
   const [user, setUser] = useState<{ name?: string; email: string } | null>(null);
 
@@ -58,17 +57,17 @@ export function Topbar() {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56 bg-white" align="end" forceMount>
             <DropdownMenuLabel className="font-normal">
-              <div className="flex flex-col space-y-1">
+              <div className="flex flex-col space-y-1 py-2">
                 <p className="text-sm font-medium leading-none">
                   {user?.name || "Admin User"}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground">
-                  {user?.email || "admin@verifyhub.com"}
+                  {user?.email}
                 </p>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout} className="text-red-600 cursor-pointer">
+            <DropdownMenuItem onClick={handleLogout} className="text-red-600 cursor-pointer py-2">
               <LogOut className="mr-2 h-4 w-4" />
               Logout
             </DropdownMenuItem>
