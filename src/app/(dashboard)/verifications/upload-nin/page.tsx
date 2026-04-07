@@ -57,6 +57,11 @@ export default function BulkNINRetrievalPage() {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFile = e.target.files?.[0];
     if (!uploadedFile) return;
+
+    setFile(null);
+    setRows([]);
+    setProgress({ processed: 0, total: 0 });
+
     setFile(uploadedFile);
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -101,6 +106,8 @@ export default function BulkNINRetrievalPage() {
       setProgress({ processed: 0, total: parsedRows.length });
     };
     reader.readAsArrayBuffer(uploadedFile);
+
+    e.target.value = "";
   };
 
   const startProcessing = async () => {
