@@ -96,6 +96,22 @@ export function useVerify2FA() {
 export function useResend2FA() {
   return useMutation({
     mutationFn: authApi.resend2FA,
+    onSuccess: (data) => {
+      if (data.success) {
+        toast.success("Verification code resent", {
+          description: data.message || "Please check your email",
+        });
+      } else {
+        toast.error("Failed to resend code", {
+          description: data.message || "Please try again later",
+        });
+      }
+    },
+    onError: (error: any) => {
+      toast.error("Error resending code", {
+        description: error.message || "Network error",
+      });
+    },
   });
 }
 

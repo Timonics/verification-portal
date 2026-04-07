@@ -117,7 +117,7 @@ export default function LoginPage() {
                     <Input
                       id="email"
                       type="email"
-                      placeholder="admin@verifyhub.com"
+                      placeholder="Enter your email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
@@ -126,7 +126,6 @@ export default function LoginPage() {
                     />
                   </div>
                 </motion.div>
-
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -164,8 +163,9 @@ export default function LoginPage() {
                     </button>
                   </div>
                 </motion.div>
-
-                <motion.div
+                {/* Remember me and forgot password sections have been removed for
+                a cleaner UI, but can be added back in if needed. */}
+                {/* <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.5 }}
@@ -194,8 +194,7 @@ export default function LoginPage() {
                   >
                     Forgot password?
                   </a>
-                </motion.div>
-
+                </motion.div> */}
                 {error && (
                   <motion.p
                     initial={{ opacity: 0 }}
@@ -205,7 +204,6 @@ export default function LoginPage() {
                     {error}
                   </motion.p>
                 )}
-
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -232,7 +230,7 @@ export default function LoginPage() {
               </form>
 
               {/* Alternative Login */}
-              <motion.div
+              {/* <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.7 }}
@@ -255,10 +253,10 @@ export default function LoginPage() {
                     Use Biometric Authentication
                   </span>
                 </button>
-              </motion.div>
+              </motion.div> */}
 
               {/* Demo credentials */}
-              <motion.div
+              {/* <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8 }}
@@ -271,7 +269,7 @@ export default function LoginPage() {
                   </span>{" "}
                   / any password
                 </p>
-              </motion.div>
+              </motion.div> */}
             </div>
           </div>
 

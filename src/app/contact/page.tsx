@@ -91,18 +91,20 @@ export default function ContactPage() {
         >
           <div className="container mx-auto px-6 py-4">
             <div className="flex items-center justify-between">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                className="flex items-center space-x-2 cursor-pointer"
-              >
-                <div className="relative">
-                  <Shield className="w-8 h-8 text-teal-600" />
-                  <Sparkles className="w-3 h-3 text-yellow-500 absolute -top-1 -right-1" />
-                </div>
-                <span className="text-xl font-bold bg-linear-to-r from-teal-600 to-teal-500 bg-clip-text text-transparent">
-                  VerifyHub
-                </span>
-              </motion.div>
+              <Link href="/">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  className="flex items-center space-x-2 cursor-pointer"
+                >
+                  <div className="relative">
+                    <Shield className="w-8 h-8 text-teal-600" />
+                    <Sparkles className="w-3 h-3 text-yellow-500 absolute -top-1 -right-1" />
+                  </div>
+                  <span className="text-xl font-bold bg-linear-to-r from-teal-600 to-teal-500 bg-clip-text text-transparent">
+                    VerifyHub
+                  </span>
+                </motion.div>
+              </Link>
               <div className="hidden md:flex items-center space-x-8">
                 {["Services"].map((item, i) => (
                   <motion.a
@@ -136,41 +138,37 @@ export default function ContactPage() {
           </div>
         </motion.nav>
 
-        
-          {/* Header */}
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-12"
+        >
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Have questions or need support? We're here to help. Reach out to our
+            team and we'll get back to you promptly.
+          </p>
+        </motion.div>
+
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Contact Info */}
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="lg:col-span-1 space-y-6"
           >
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Contact Us
-            </h1>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Have questions or need support? We're here to help. Reach out to
-              our team and we'll get back to you promptly.
-            </p>
-          </motion.div>
-
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Contact Info */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="lg:col-span-1 space-y-6"
-            >
-              <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <Mail className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <h3 className="font-semibold text-gray-900">Email</h3>
+            <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Mail className="w-5 h-5 text-blue-600" />
                 </div>
-                <p className="text-gray-600">support@verifyhub.com</p>
-                <p className="text-gray-600">sales@verifyhub.com</p>
+                <h3 className="font-semibold text-gray-900">Email</h3>
               </div>
+              <p className="text-gray-600">support@verifyhub.ng</p>
+            </div>
 
-              <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
+            {/* <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-2 bg-green-100 rounded-lg">
                     <Phone className="w-5 h-5 text-green-600" />
@@ -195,115 +193,113 @@ export default function ContactPage() {
                   <br />
                   Nigeria
                 </p>
-              </div>
-            </motion.div>
+              </div> */}
+          </motion.div>
 
-            {/* Contact Form */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="lg:col-span-2"
-            >
-              <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">
-                  Send us a message
-                </h2>
+          {/* Contact Form */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="lg:col-span-2"
+          >
+            <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm">
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">
+                Send us a message
+              </h2>
 
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="name">Your Name *</Label>
-                      <Input
-                        id="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        className="mt-1"
-                        placeholder="John Doe"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="email">Email Address *</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        className="mt-1"
-                        placeholder="john@example.com"
-                      />
-                    </div>
-                  </div>
-
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="subject">Subject *</Label>
+                    <Label htmlFor="name">Your Name *</Label>
                     <Input
-                      id="subject"
-                      value={formData.subject}
+                      id="name"
+                      value={formData.name}
                       onChange={handleChange}
                       required
                       className="mt-1"
-                      placeholder="How can we help you?"
+                      placeholder="Ayomide Olajumobi"
                     />
                   </div>
-
                   <div>
-                    <Label htmlFor="message">Message *</Label>
-                    <Textarea
-                      id="message"
-                      rows={5}
-                      value={formData.message}
+                    <Label htmlFor="email">Email Address *</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={formData.email}
                       onChange={handleChange}
                       required
                       className="mt-1"
-                      placeholder="Please describe your inquiry..."
+                      placeholder="ayomide@example.com"
                     />
                   </div>
+                </div>
 
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full bg-linear-to-r from-teal-600 to-teal-500 hover:from-teal-700 hover:to-teal-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all"
-                  >
-                    {isLoading ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        <span>Sending...</span>
-                      </div>
-                    ) : (
-                      <>
-                        Send Message
-                        <Send className="ml-2 w-4 h-4" />
-                      </>
-                    )}
-                  </Button>
+                <div>
+                  <Label htmlFor="subject">Subject *</Label>
+                  <Input
+                    id="subject"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    required
+                    className="mt-1"
+                    placeholder="How can we help you?"
+                  />
+                </div>
 
-                  {/* Status Message */}
-                  {status.type && (
-                    <div
-                      className={`flex items-center gap-2 p-3 rounded-xl ${
-                        status.type === "success"
-                          ? "bg-green-50 text-green-700"
-                          : "bg-red-50 text-red-700"
-                      }`}
-                    >
-                      {status.type === "success" ? (
-                        <CheckCircle className="w-5 h-5" />
-                      ) : (
-                        <AlertCircle className="w-5 h-5" />
-                      )}
-                      <span className="font-body text-sm">
-                        {status.message}
-                      </span>
+                <div>
+                  <Label htmlFor="message">Message *</Label>
+                  <Textarea
+                    id="message"
+                    rows={5}
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
+                    className="mt-1"
+                    placeholder="Please describe your inquiry..."
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-linear-to-r from-teal-600 to-teal-500 hover:from-teal-700 hover:to-teal-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all"
+                >
+                  {isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Sending...</span>
                     </div>
+                  ) : (
+                    <>
+                      Send Message
+                      <Send className="ml-2 w-4 h-4" />
+                    </>
                   )}
-                </form>
-              </div>
-            </motion.div>
-          </div>
-          {/* Alternative Contact Info */}
-          <div className="mt-12 text-center text-gray-500 font-body text-sm">
+                </Button>
+
+                {/* Status Message */}
+                {status.type && (
+                  <div
+                    className={`flex items-center gap-2 p-3 rounded-xl ${
+                      status.type === "success"
+                        ? "bg-green-50 text-green-700"
+                        : "bg-red-50 text-red-700"
+                    }`}
+                  >
+                    {status.type === "success" ? (
+                      <CheckCircle className="w-5 h-5" />
+                    ) : (
+                      <AlertCircle className="w-5 h-5" />
+                    )}
+                    <span className="font-body text-sm">{status.message}</span>
+                  </div>
+                )}
+              </form>
+            </div>
+          </motion.div>
+        </div>
+        {/* Alternative Contact Info */}
+        {/* <div className="mt-12 text-center text-gray-500 font-body text-sm">
             <p>
               Or reach us directly at:{" "}
               <a
@@ -313,7 +309,7 @@ export default function ContactPage() {
                 support@verificationportal.com
               </a>
             </p>
-          </div>
+          </div> */}
       </div>
     </div>
   );

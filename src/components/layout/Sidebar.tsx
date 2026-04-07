@@ -43,12 +43,12 @@ const navigation: NavItem[] = [
         href: "/verifications/nin-phone",
         icon: Phone,
       },
-      { name: "BVN Verification", href: "/verifications/bvn", icon: UserCheck },
       {
-        name: "Upload for NIN",
+        name: "Upload for NIN Retrieval",
         href: "/verifications/upload-nin",
         icon: File,
       },
+      { name: "BVN Verification", href: "/verifications/bvn", icon: UserCheck },
       { name: "CAC Verification", href: "/verifications/cac", icon: Building2 },
       // {
       //   name: "PEP Screening",
@@ -57,7 +57,7 @@ const navigation: NavItem[] = [
       //   comingSoon: false,
       // },
       {
-        name: "AML Screening",
+        name: "AML/PEP Screening",
         href: "/verifications/aml",
         icon: BarChart3,
         comingSoon: false,

@@ -71,7 +71,7 @@ export default function LandingPage() {
               </span>
             </motion.div>
             <div className="hidden md:flex items-center space-x-8">
-              {["Services"].map((item, i) => (
+              {["Get Started"].map((item, i) => (
                 <motion.a
                   key={item}
                   href={`#${item.toLowerCase()}`}
@@ -152,7 +152,7 @@ export default function LandingPage() {
               </div>
               <div className="flex flex-wrap items-center gap-6 mt-8">
                 {[
-                  { icon: CheckCircle, text: "No credit card required" },
+                  // { icon: CheckCircle, text: "No credit card required" },
                   { icon: Lock, text: "NDPR compliant" },
                   { icon: Shield, text: "256-bit encryption" },
                 ].map((item, i) => (
@@ -572,7 +572,7 @@ export default function LandingPage() {
               <p className="text-sm leading-relaxed">
                 Fast, secure identity verification for Nigerian businesses.
               </p>
-              <div className="flex gap-4 mt-6">
+              {/* <div className="flex gap-4 mt-6">
                 {[Mail, Phone, Globe].map((Icon, i) => (
                   <div
                     key={i}
@@ -581,7 +581,7 @@ export default function LandingPage() {
                     <Icon className="w-4 h-4" />
                   </div>
                 ))}
-              </div>
+              </div> */}
             </div>
             <div>
               <h4 className="text-white font-semibold mb-4">Product</h4>

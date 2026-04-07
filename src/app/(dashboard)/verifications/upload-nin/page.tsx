@@ -1,385 +1,340 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   Upload,
   FileSpreadsheet,
+  Download,
+  Play,
+  Eye,
+  RefreshCw,
   CheckCircle,
   XCircle,
-  Download,
-  Trash2,
   AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { useNinVerification } from "@/hooks/useNINVerification";
+import { Progress } from "@/components/ui/progress";
 import * as XLSX from "xlsx";
-import type { BulkNinRecord, BulkNinProgress } from "@/types/bulk-nin.types";
+import { useNinByPhone } from "@/hooks/useNINByPhone";
+import { formatDate } from "@/lib/utils";
+import { NinDetailsModal } from "@/components/verifications/nin-details-modal";
+import type { BulkRetrievalRow } from "@/types/bulk-nin.types";
 
-export default function BulkNINVerificationPage() {
-  const { mutateAsync: verifyNIN } = useNinVerification();
+export default function BulkNINRetrievalPage() {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
-  const [records, setRecords] = useState<BulkNinRecord[]>([]);
+  const [rows, setRows] = useState<BulkRetrievalRow[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [progress, setProgress] = useState<BulkNinProgress | null>(null);
-  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [progress, setProgress] = useState({ processed: 0, total: 0 });
+  const [selectedRow, setSelectedRow] = useState<BulkRetrievalRow | null>(null);
+  const { mutateAsync: lookupNIN } = useNinByPhone();
+
+  // Helper: compare row data with API response
+  const isMatch = (row: BulkRetrievalRow, apiData: any) => {
+    const rowNameMatch =
+      row.firstName.toLowerCase() === apiData.first_name?.toLowerCase() &&
+      row.lastName.toLowerCase() === apiData.last_name?.toLowerCase();
+    const rowNameWithMiddle =
+      row.middleName &&
+      row.firstName.toLowerCase() === apiData.first_name?.toLowerCase() &&
+      row.middleName.toLowerCase() === apiData.middle_name?.toLowerCase() &&
+      row.lastName.toLowerCase() === apiData.last_name?.toLowerCase();
+    const dobMatch = row.dateOfBirth === apiData.date_of_birth;
+    const genderMatch =
+      row.gender.toLowerCase() === apiData.gender?.toLowerCase();
+    const phoneMatch = row.phone === apiData.phone_number;
+    return (
+      (rowNameMatch || rowNameWithMiddle) &&
+      dobMatch &&
+      genderMatch &&
+      phoneMatch
+    );
+  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const uploadedFile = e.target.files?.[0];
     if (!uploadedFile) return;
-
-    setUploadError(null);
     setFile(uploadedFile);
-    setRecords([]);
-    setProgress(null);
-
     const reader = new FileReader();
     reader.onload = (event) => {
-      try {
-        const data = event.target?.result;
-        const workbook = XLSX.read(data, { type: "binary" });
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const rows = XLSX.utils.sheet_to_json(sheet, {
-          header: 1,
-        }) as string[][];
-
-        if (rows.length < 2) {
-          setUploadError(
-            "File must contain at least one NIN (header + data row)",
-          );
-          return;
-        }
-
-        const headerRow = rows[0];
-        const ninColumnIndex = headerRow.findIndex((col) =>
-          col?.toString().toLowerCase().includes("nin"),
-        );
-
-        if (ninColumnIndex === -1) {
-          setUploadError(
-            'File must contain a column named "NIN" (case-insensitive)',
-          );
-          return;
-        }
-
-        const ninRecords: BulkNinRecord[] = rows
-          .slice(1)
-          .map((row, idx) => ({
-            row: idx + 2,
-            nin:
-              row[ninColumnIndex]?.toString().trim().replace(/\D/g, "") || "",
-            status: "pending" as const,
-            data: undefined,
-            error: undefined,
-          }))
-          .filter((r) => r.nin.length === 11);
-
-        if (ninRecords.length === 0) {
-          setUploadError("No valid 11‑digit NINs found in the file");
-          return;
-        }
-
-        setRecords(ninRecords);
-      } catch (err) {
-        setUploadError(
-          "Failed to parse file. Please upload a valid Excel/CSV file.",
-        );
+      const data = event.target?.result;
+      if (!(data instanceof ArrayBuffer)) return;
+      const workbook = XLSX.read(data, { type: "array" });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const json = XLSX.utils.sheet_to_json(sheet) as any[];
+      if (json.length === 0) {
+        alert("File is empty");
+        return;
       }
+      const parsedRows: BulkRetrievalRow[] = json.map((row, idx) => ({
+        id: crypto.randomUUID(),
+        rowNumber: idx + 1,
+        lastName: row["Last Name"] || row["last_name"] || "",
+        firstName: row["First Name"] || row["first_name"] || "",
+        middleName: row["Middle Name"] || row["middle_name"] || "",
+        dateOfBirth: (() => {
+          let val = row["Date of Birth"] ?? row["dob"] ?? "";
+          if (typeof val === "number" && !isNaN(val)) {
+            // Excel serial date to YYYY-MM-DD
+            const date = new Date((val - 25569) * 86400000);
+            if (!isNaN(date.getTime())) {
+              val = date.toISOString().slice(0, 10);
+            }
+          }
+          return String(val);
+        })(),
+        gender: row["Gender"] || row["gender"] || "",
+        phone: (() => {
+          let val = row["Phone"] ?? row["phone"] ?? "";
+          if (typeof val === "number") {
+            val = val.toString();
+            if (val.length === 10) val = "0" + val;
+          }
+          return String(val);
+        })(),
+        matchStatus: "pending",
+      }));
+      setRows(parsedRows);
+      setProgress({ processed: 0, total: parsedRows.length });
     };
-    reader.readAsBinaryString(uploadedFile);
+    reader.readAsArrayBuffer(uploadedFile);
   };
 
-  const startVerification = async () => {
-    if (records.length === 0) return;
+  const startProcessing = async () => {
     setIsProcessing(true);
-    setProgress({
-      total: records.length,
-      processed: 0,
-      succeeded: 0,
-      failed: 0,
-      currentBatch: 0,
-    });
-
-    // Process in batches of 5 to avoid rate limits
-    const batchSize = 5;
-    const updatedRecords = [...records];
-
-    for (let i = 0; i < updatedRecords.length; i += batchSize) {
-      const batch = updatedRecords.slice(i, i + batchSize);
-      const batchPromises = batch.map(async (record, idx) => {
-        const recordIndex = i + idx;
-        updatedRecords[recordIndex].status = "processing";
-        setRecords([...updatedRecords]);
-        setProgress((prev) => ({
-          ...prev!,
-          currentBatch: Math.floor(recordIndex / batchSize) + 1,
-        }));
-
-        try {
-          const result = await verifyNIN(record.nin);
-          if (result.success && result.data) {
-            updatedRecords[recordIndex] = {
-              ...record,
-              status: "success",
-              data: {
-                first_name: result.data.first_name,
-                last_name: result.data.last_name,
-                middle_name: result.data.middle_name,
-                date_of_birth: result.data.date_of_birth,
-                phone_number: result.data.phone_number,
-                gender: result.data.gender,
-              },
-            };
-            setProgress((prev) => ({
-              ...prev!,
-              succeeded: prev!.succeeded + 1,
-            }));
-          } else {
-            updatedRecords[recordIndex] = {
-              ...record,
-              status: "failed",
-              error: result.message || "Verification failed",
-            };
-            setProgress((prev) => ({ ...prev!, failed: prev!.failed + 1 }));
-          }
-        } catch (err: any) {
-          updatedRecords[recordIndex] = {
-            ...record,
-            status: "failed",
-            error: err.message || "Request error",
+    const updatedRows = [...rows];
+    for (let i = 0; i < updatedRows.length; i++) {
+      const row = updatedRows[i];
+      row.matchStatus = "processing";
+      setRows([...updatedRows]);
+      try {
+        const result = await lookupNIN(row.phone);
+        if (result.success && result.data) {
+          const apiData = result.data;
+          const match = isMatch(row, apiData);
+          row.matchedDetails = {
+            firstName: apiData.first_name,
+            lastName: apiData.last_name,
+            middleName: apiData.middle_name,
+            dateOfBirth: apiData.date_of_birth,
+            gender: apiData.gender,
+            phone: apiData.phone_number,
+            photo: apiData.photo,
+            nin: apiData.nin,
           };
-          setProgress((prev) => ({ ...prev!, failed: prev!.failed + 1 }));
-        } finally {
-          // Status already set in try/catch – no need to change it here.
-          setRecords([...updatedRecords]);
-          setProgress((prev) => ({ ...prev!, processed: prev!.processed + 1 }));
+          if (match) {
+            row.nin = apiData.nin;
+            row.matchStatus = "matched";
+          } else {
+            row.matchStatus = "no_match";
+          }
+        } else if (result.service_down) {
+          row.matchStatus = "not_found";
+          row.matchedDetails = undefined;
+        } else {
+          row.matchStatus = "not_found";
         }
-      });
-      await Promise.all(batchPromises);
-      // Small delay between batches
-      if (i + batchSize < updatedRecords.length)
-        await new Promise((r) => setTimeout(r, 500));
+      } catch {
+        row.matchStatus = "not_found";
+      }
+      row.processedAt = new Date();
+      setRows([...updatedRows]);
+      setProgress({ processed: i + 1, total: updatedRows.length });
     }
-
     setIsProcessing(false);
   };
 
-  const downloadResults = () => {
-    const headers = [
-      "Row",
-      "NIN",
-      "Status",
-      "First Name",
-      "Last Name",
-      "Middle Name",
-      "Date of Birth",
-      "Phone Number",
-      "Gender",
-      "Error",
-    ];
-    const rows = records.map((record) => [
-      record.row,
-      record.nin,
-      record.status,
-      record.data?.first_name || "",
-      record.data?.last_name || "",
-      record.data?.middle_name || "",
-      record.data?.date_of_birth || "",
-      record.data?.phone_number || "",
-      record.data?.gender || "",
-      record.error || "",
-    ]);
-
-    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+  const exportResults = () => {
+    const exportData = rows.map((row) => ({
+      Row: row.rowNumber,
+      "Last Name": row.lastName,
+      "First Name": row.firstName,
+      "Middle Name": row.middleName || "",
+      DOB: row.dateOfBirth,
+      Gender: row.gender,
+      Phone: row.phone,
+      NIN: row.nin || "",
+      "Match Status":
+        row.matchStatus === "matched"
+          ? "Matched"
+          : row.matchStatus === "no_match"
+            ? "No Match"
+            : "Not Found",
+      "Processed At": row.processedAt ? formatDate(row.processedAt) : "",
+    }));
+    const ws = XLSX.utils.json_to_sheet(exportData);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "NIN Verification Results");
+    XLSX.utils.book_append_sheet(wb, ws, "NIN Retrieval Results");
     XLSX.writeFile(
       wb,
-      `nin_bulk_results_${new Date().toISOString().slice(0, 19)}.xlsx`,
+      `nin_retrieval_${new Date().toISOString().slice(0, 19)}.xlsx`,
     );
   };
 
-  const clearAll = () => {
-    setFile(null);
-    setRecords([]);
-    setProgress(null);
-    setUploadError(null);
-  };
-
   const stats = {
-    total: records.length,
-    succeeded: records.filter((r) => r.status === "success").length,
-    failed: records.filter((r) => r.status === "failed").length,
-    pending: records.filter((r) => r.status === "pending").length,
+    total: rows.length,
+    matched: rows.filter((r) => r.matchStatus === "matched").length,
+    noMatch: rows.filter((r) => r.matchStatus === "no_match").length,
+    notFound: rows.filter((r) => r.matchStatus === "not_found").length,
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">
-          Bulk NIN Verification
-        </h1>
-        <p className="text-gray-600 mt-1">
-          Upload an Excel/CSV file with NINs to verify them in batch.
-        </p>
+    <div className="max-w-7xl mx-auto p-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold">Bulk NIN Retrieval</h1>
+          <p className="text-gray-600">
+            Upload an Excel file with personal details to retrieve NINs via
+            phone number.
+          </p>
+        </div>
+        {rows.length > 0 && (
+          <Button onClick={exportResults} variant="outline" className="gap-2">
+            <Download className="w-4 h-4" /> Export Results
+          </Button>
+        )}
       </div>
 
-      {/* File Upload Section */}
-      <Card className="p-6 mb-8 border-dashed border-2 border-gray-300 bg-gray-50">
-        <div className="flex flex-col items-center justify-center gap-4">
+      {/* File upload */}
+      <Card className="p-6 border-dashed border-2">
+        <div className="flex flex-col items-center gap-4">
           <FileSpreadsheet className="w-12 h-12 text-teal-600" />
-          <div className="text-center">
-            <p className="text-sm text-gray-600">
-              Upload a file with a column named <strong>"NIN"</strong>
+          <p className="text-sm text-gray-600">
+            Upload Excel/CSV with columns:{" "}
+            <strong>
+              Last Name, First Name, Middle Name (optional), Date of Birth,
+              Gender, Phone
+            </strong>
+          </p>
+          <label className="cursor-pointer">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".xlsx,.xls,.csv"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+            <Button
+              variant="outline"
+              className="gap-2"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Upload className="w-4 h-4" /> Choose File
+            </Button>
+          </label>
+          {file && (
+            <p className="text-sm text-gray-500">
+              📄 {file.name} – {rows.length} rows loaded
             </p>
-            <p className="text-xs text-gray-500 mt-1">
-              Supported formats: .xlsx, .xls, .csv
-            </p>
-          </div>
-          <div className="flex gap-3">
-            <label className="cursor-pointer">
-              <input
-                type="file"
-                accept=".xlsx,.xls,.csv"
-                onChange={handleFileUpload}
-                className="hidden"
-              />
-              <Button variant="outline" className="gap-2">
-                <Upload className="w-4 h-4" /> Choose File
-              </Button>
-            </label>
-            {file && (
-              <Button
-                variant="ghost"
-                onClick={clearAll}
-                disabled={isProcessing}
-              >
-                <Trash2 className="w-4 h-4" /> Clear
-              </Button>
-            )}
-          </div>
-          {uploadError && (
-            <div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 p-2 rounded">
-              <AlertCircle className="w-4 h-4" /> {uploadError}
-            </div>
-          )}
-          {file && !uploadError && (
-            <div className="text-sm text-gray-600">
-              📄 {file.name} – {records.length} valid NIN(s) found
-            </div>
           )}
         </div>
       </Card>
 
-      {/* Progress & Actions */}
-      {records.length > 0 && (
-        <div className="mb-8 space-y-4">
-          <div className="flex flex-wrap gap-4 justify-between items-center">
-            <div className="flex gap-4">
-              <Badge variant="outline" className="bg-gray-100">
-                Total: {stats.total}
-              </Badge>
-              <Badge className="bg-green-100 text-green-700">
-                ✅ Succeeded: {stats.succeeded}
-              </Badge>
-              <Badge className="bg-red-100 text-red-700">
-                ❌ Failed: {stats.failed}
-              </Badge>
-              <Badge className="bg-yellow-100 text-yellow-700">
-                ⏳ Pending: {stats.pending}
-              </Badge>
-            </div>
-            <div className="flex gap-3">
-              {!isProcessing && stats.total > 0 && stats.pending > 0 && (
-                <Button
-                  onClick={startVerification}
-                  className="bg-teal-600 hover:bg-teal-700"
-                >
-                  Start Verification
-                </Button>
-              )}
-              {stats.succeeded + stats.failed === stats.total &&
-                stats.total > 0 && (
-                  <Button
-                    variant="outline"
-                    onClick={downloadResults}
-                    className="gap-2"
-                  >
-                    <Download className="w-4 h-4" /> Download Results
-                  </Button>
-                )}
-            </div>
+      {/* Stats and Process button */}
+      {rows.length > 0 && (
+        <div className="flex justify-between items-center">
+          <div className="flex gap-3">
+            <Badge>Total: {stats.total}</Badge>
+            <Badge className="bg-green-100 text-green-700">
+              ✅ Matched: {stats.matched}
+            </Badge>
+            <Badge className="bg-yellow-100 text-yellow-700">
+              ⚠️ No Match: {stats.noMatch}
+            </Badge>
+            <Badge className="bg-red-100 text-red-700">
+              ❌ Not Found: {stats.notFound}
+            </Badge>
           </div>
-
-          {progress && isProcessing && (
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span>
-                  Processing: {progress.processed} / {progress.total}
-                </span>
-                <span>
-                  ✅ {progress.succeeded} | ❌ {progress.failed}
-                </span>
-              </div>
-              <Progress
-                value={(progress.processed / progress.total) * 100}
-                className="h-2"
-              />
+          {progress.processed < stats.total && !isProcessing && (
+            <Button
+              onClick={startProcessing}
+              className="gap-2 bg-teal-600 hover:bg-teal-700"
+            >
+              <Play className="w-4 h-4" /> Start Retrieval
+            </Button>
+          )}
+          {isProcessing && (
+            <div className="w-64">
+              <Progress value={(progress.processed / progress.total) * 100} />
             </div>
           )}
         </div>
       )}
 
       {/* Results Table */}
-      {records.length > 0 && (
-        <div className="overflow-x-auto border rounded-lg">
+      {rows.length > 0 && (
+        <div className="overflow-x-auto border rounded-lg shadow-lg">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b">
+            <thead className="bg-gray-100 border-b">
               <tr>
-                <th className="px-4 py-3 text-left">Row</th>
-                <th className="px-4 py-3 text-left">NIN</th>
-                <th className="px-4 py-3 text-left">Status</th>
-                <th className="px-4 py-3 text-left">First Name</th>
-                <th className="px-4 py-3 text-left">Last Name</th>
-                <th className="px-4 py-3 text-left">DOB</th>
-                <th className="px-4 py-3 text-left">Phone</th>
-                <th className="px-4 py-3 text-left">Error</th>
+                <th className="px-4 py-3">Row</th>
+                <th className="px-4 py-3">Last Name</th>
+                <th className="px-4 py-3">First Name</th>
+                <th className="px-4 py-3">Middle Name</th>
+                <th className="px-4 py-3">DOB</th>
+                <th className="px-4 py-3">Gender</th>
+                <th className="px-4 py-3">Phone</th>
+                <th className="px-4 py-3">NIN</th>
+                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3">Processed At</th>
+                <th className="px-4 py-3">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y">
-              {records.map((record, idx) => (
-                <tr key={idx} className="hover:bg-gray-50">
-                  <td className="px-4 py-2">{record.row}</td>
-                  <td className="px-4 py-2 font-mono">{record.nin}</td>
-                  <td className="px-4 py-2">
-                    {record.status === "success" && (
-                      <CheckCircle className="w-4 h-4 text-green-600" />
+            <tbody className="divide-y bg-white">
+              {rows.map((row) => (
+                <tr key={row.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-3">{row.rowNumber}</td>
+                  <td className="px-4 py-3">{row.lastName}</td>
+                  <td className="px-4 py-3">{row.firstName}</td>
+                  <td className="px-4 py-3">{row.middleName || "-"}</td>
+                  <td className="px-4 py-3">{row.dateOfBirth}</td>
+                  <td className="px-4 py-3">{row.gender}</td>
+                  <td className="px-4 py-3">{row.phone}</td>
+                  <td className="px-4 py-3 font-mono text-xs">
+                    {row.nin || "-"}
+                  </td>
+                  <td className="px-4 py-3">
+                    {row.matchStatus === "matched" && (
+                      <Badge className="bg-green-100 text-green-700">
+                        Matched
+                      </Badge>
                     )}
-                    {record.status === "failed" && (
-                      <XCircle className="w-4 h-4 text-red-600" />
+                    {row.matchStatus === "no_match" && (
+                      <Badge className="bg-yellow-100 text-yellow-700">
+                        No Match
+                      </Badge>
                     )}
-                    {record.status === "processing" && (
-                      <div className="w-4 h-4 border-2 border-teal-600 border-t-transparent rounded-full animate-spin" />
+                    {row.matchStatus === "not_found" && (
+                      <Badge className="bg-red-100 text-red-700">
+                        Not Found
+                      </Badge>
                     )}
-                    {record.status === "pending" && (
-                      <div className="w-4 h-4 rounded-full bg-gray-300" />
+                    {row.matchStatus === "processing" && (
+                      <Badge className="bg-blue-100 text-blue-700">
+                        Processing
+                      </Badge>
+                    )}
+                    {row.matchStatus === "pending" && (
+                      <Badge variant="outline">Pending</Badge>
                     )}
                   </td>
-                  <td className="px-4 py-2">
-                    {record.data?.first_name || "-"}
+                  <td className="px-4 py-3 text-xs">
+                    {row.processedAt ? formatDate(row.processedAt) : "-"}
                   </td>
-                  <td className="px-4 py-2">{record.data?.last_name || "-"}</td>
-                  <td className="px-4 py-2">
-                    {record.data?.date_of_birth || "-"}
-                  </td>
-                  <td className="px-4 py-2">
-                    {record.data?.phone_number || "-"}
-                  </td>
-                  <td className="px-4 py-2 text-red-600 text-xs">
-                    {record.error || "-"}
+                  <td className="px-4 py-3">
+                    {row.matchedDetails && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSelectedRow(row)}
+                        className="text-blue-600"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -387,6 +342,12 @@ export default function BulkNINVerificationPage() {
           </table>
         </div>
       )}
+
+      <NinDetailsModal
+        row={selectedRow}
+        open={!!selectedRow}
+        onClose={() => setSelectedRow(null)}
+      />
     </div>
   );
 }

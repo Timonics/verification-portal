@@ -50,12 +50,13 @@ export function NinPhoneForm({
       setIsValid(true);
     }
     // Auto-format: 08012345678 -> 080-123-4567-8
-    if (cleaned.length <= 3) return cleaned;
-    if (cleaned.length <= 6)
-      return `${cleaned.slice(0, 3)}-${cleaned.slice(3)}`;
-    if (cleaned.length <= 10)
-      return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
-    return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 6)}-${cleaned.slice(6, 10)}-${cleaned.slice(10)}`;
+    //   if (cleaned.length <= 3) return cleaned;
+    //   if (cleaned.length <= 6)
+    //     return `${cleaned.slice(0, 3)}-${cleaned.slice(3)}`;
+    //   if (cleaned.length <= 10)
+    //     return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
+    //   return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 6)}-${cleaned.slice(6, 10)}-${cleaned.slice(10)}`;
+    return cleaned;
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,12 +105,12 @@ export function NinPhoneForm({
           <Input
             id="phone"
             type="tel"
-            placeholder="080-123-4567-8"
+            placeholder="08012345678"
             value={phone}
             onChange={handleChange}
             disabled={isLoading}
             className={`pl-10 font-mono text-lg ${displayError ? "border-red-500 focus:ring-red-500" : "border-gray-200 focus:border-teal-500 focus:ring-teal-500"}`}
-            maxLength={15}
+            maxLength={11}
           />
           <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           {isValid && !displayError && (
@@ -117,9 +118,7 @@ export function NinPhoneForm({
           )}
         </div>
         <div className="flex justify-between mt-1">
-          <p className="text-xs text-gray-500">
-            Nigerian mobile number (e.g., 08012345678)
-          </p>
+          <p className="text-xs text-gray-500">{phone.length}/11 digits</p>
           {displayError && (
             <p className="text-xs text-red-500 flex items-center gap-1">
               <AlertCircle className="w-3 h-3" />

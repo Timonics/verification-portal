@@ -2,13 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import {
-  Shield,
-  User,
-  Building2,
-  AlertCircle,
-  ArrowRight,
-} from "lucide-react";
+import { Shield, User, Building2, AlertCircle, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { EntityType, AmlRequest } from "@/types/aml.types";
+import { COUNTRIES } from "@/lib/data";
 
 interface AmlFormProps {
   onSubmit: (data: AmlRequest) => void;
@@ -41,17 +36,17 @@ export function AmlForm({
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dob, setDob] = useState("");
-  const [nationality, setNationality] = useState("");
+  const [nationality, setNationality] = useState(""); // store code, e.g. "NG"
   const [gender, setGender] = useState<"male" | "female">("male");
 
   // Organization fields
   const [orgName, setOrgName] = useState("");
   const [regNumber, setRegNumber] = useState("");
-  const [country, setCountry] = useState("");
+  const [country, setCountry] = useState(""); // store code
 
   const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
 
@@ -73,7 +68,7 @@ export function AmlForm({
         return;
       }
       onSubmit({
-        name: orgName,
+        names: orgName,
         schema: "organization",
         registration_number: regNumber || undefined,
         country: country || undefined,
@@ -106,8 +101,8 @@ export function AmlForm({
       </div>
 
       {/* Entity Type Toggle */}
-      <div>
-        <Label className="text-gray-700 font-medium mb-2 block">
+      <div className="pb-4">
+        <Label className="text-gray-700 text-lg underline underline-offset-2 font-medium mb-4 block">
           Entity Type
         </Label>
         <RadioGroup
@@ -145,26 +140,26 @@ export function AmlForm({
         >
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>First Name *</Label>
+              <Label className="mb-2">First Name *</Label>
               <Input
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 disabled={isLoading}
-                placeholder="John"
+                placeholder="Olawale"
               />
             </div>
             <div>
-              <Label>Last Name *</Label>
+              <Label className="mb-2">Last Name *</Label>
               <Input
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 disabled={isLoading}
-                placeholder="Doe"
+                placeholder="Ajumobi"
               />
             </div>
           </div>
           <div>
-            <Label>Date of Birth (YYYY-MM-DD)</Label>
+            <Label className="mb-2">Date of Birth (YYYY-MM-DD)</Label>
             <Input
               value={dob}
               onChange={(e) => setDob(e.target.value)}
@@ -172,30 +167,50 @@ export function AmlForm({
               placeholder="1990-01-01"
             />
           </div>
-          <div>
-            <Label>Nationality (e.g., NG)</Label>
-            <Input
-              value={nationality}
-              onChange={(e) => setNationality(e.target.value)}
-              disabled={isLoading}
-              placeholder="NG"
-            />
-          </div>
-          <div>
-            <Label>Gender</Label>
-            <Select
-              value={gender}
-              onValueChange={(v) => setGender(v as "male" | "female")}
-              disabled={isLoading}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="male">Male</SelectItem>
-                <SelectItem value="female">Female</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex items-center gap-10">
+            <div>
+              <Label className="mb-2">Nationality</Label>
+              <Select
+                value={nationality}
+                onValueChange={(v) => setNationality(v)}
+                disabled={isLoading}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select nationality" />
+                </SelectTrigger>
+                <SelectContent className="bg-white p-2">
+                  {COUNTRIES.map((country) => (
+                    <SelectItem
+                      key={country.code}
+                      value={country.code}
+                      className="hover:text-purple-500"
+                    >
+                      {country.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="mb-2">Gender</Label>
+              <Select
+                value={gender}
+                onValueChange={(v) => setGender(v as "male" | "female")}
+                disabled={isLoading}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-white p-2">
+                  <SelectItem value="male" className="hover:text-purple-500">
+                    Male
+                  </SelectItem>
+                  <SelectItem value="female" className="hover:text-purple-500">
+                    Female
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </motion.div>
       )}
@@ -208,7 +223,7 @@ export function AmlForm({
           className="space-y-4"
         >
           <div>
-            <Label>Organization Name *</Label>
+            <Label className="mb-2">Organization Name *</Label>
             <Input
               value={orgName}
               onChange={(e) => setOrgName(e.target.value)}
@@ -217,7 +232,9 @@ export function AmlForm({
             />
           </div>
           <div>
-            <Label>Registration Number (e.g., RC1234567)</Label>
+            <Label className="mb-2">
+              Registration Number (e.g., RC1234567)
+            </Label>
             <Input
               value={regNumber}
               onChange={(e) => setRegNumber(e.target.value)}
@@ -226,13 +243,27 @@ export function AmlForm({
             />
           </div>
           <div>
-            <Label>Country of Incorporation</Label>
-            <Input
+            <Label className="mb-2">Country of Incorporation</Label>
+            <Select
               value={country}
-              onChange={(e) => setCountry(e.target.value)}
+              onValueChange={(v) => setCountry(v)}
               disabled={isLoading}
-              placeholder="NG"
-            />
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select country" />
+              </SelectTrigger>
+              <SelectContent className="bg-white p-2">
+                {COUNTRIES.map((country) => (
+                  <SelectItem
+                    key={country.code}
+                    value={country.code}
+                    className="hover:text-purple-500"
+                  >
+                    {country.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </motion.div>
       )}

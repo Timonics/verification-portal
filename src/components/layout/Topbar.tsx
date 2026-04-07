@@ -18,8 +18,8 @@ export function Topbar() {
   const { theme, setTheme } = useTheme();
 
   return (
-    <header className="sticky top-0 z-20 flex items-center justify-between h-16 px-6 bg-white border-b border-gray-200">
-      <div className="flex-1 max-w-md">
+    <header className="sticky top-0 z-20 flex items-center justify-end h-16 px-6 bg-white border-b border-gray-200">
+      {/* <div className="flex-1 max-w-md">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input
@@ -28,7 +28,7 @@ export function Topbar() {
             className="pl-9 pr-4"
           />
         </div>
-      </div>
+      </div> */}
 
       <div className="flex items-center space-x-4">
         {/* <Button
@@ -41,10 +41,10 @@ export function Topbar() {
           <span className="sr-only">Toggle theme</span>
         </Button> */}
 
-        <Button variant="ghost" size="icon" className="relative">
+        {/* <Button variant="ghost" size="icon" className="relative">
           <Bell className="w-5 h-5" />
           <span className="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
-        </Button>
+        </Button> */}
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

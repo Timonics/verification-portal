@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useVerify2FA, useResend2FA } from "@/hooks/auth/useAuth";
 import { motion } from "framer-motion";
@@ -17,6 +17,7 @@ export default function VerifyOTPPage() {
   const [email, setEmail] = useState("");
   const [timeLeft, setTimeLeft] = useState(60);
   const [canResend, setCanResend] = useState(false);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
     const storedEmail = sessionStorage.getItem("2fa_email");
@@ -36,6 +37,25 @@ export default function VerifyOTPPage() {
     }
   }, [timeLeft, canResend]);
 
+  // Handle paste on the container of all OTP inputs
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pastedText = e.clipboardData.getData("text");
+    const digits = pastedText.replace(/\D/g, "").slice(0, 6);
+    if (digits.length === 0) return;
+
+    const newOtp = [...otp];
+    for (let i = 0; i < digits.length; i++) {
+      newOtp[i] = digits[i];
+    }
+    setOtp(newOtp);
+
+    // Focus the next empty field or the last field
+    let nextFocusIndex = digits.length;
+    if (nextFocusIndex >= 6) nextFocusIndex = 5;
+    inputRefs.current[nextFocusIndex]?.focus();
+  };
+
   const handleOtpChange = (index: number, value: string) => {
     if (value.length > 1) return;
     const newOtp = [...otp];
@@ -43,15 +63,13 @@ export default function VerifyOTPPage() {
     setOtp(newOtp);
 
     if (value && index < 5) {
-      const nextInput = document.getElementById(`otp-${index + 1}`);
-      nextInput?.focus();
+      inputRefs.current[index + 1]?.focus();
     }
   };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
-      const prevInput = document.getElementById(`otp-${index - 1}`);
-      prevInput?.focus();
+      inputRefs.current[index - 1]?.focus();
     }
   };
 
@@ -109,7 +127,10 @@ export default function VerifyOTPPage() {
               <Label className="text-center block mb-3 text-gray-700">
                 Enter 6-digit code
               </Label>
-              <div className="flex justify-center gap-2">
+              <div
+                className="flex justify-center gap-2"
+                onPaste={handlePaste}
+              >
                 {otp.map((digit, index) => (
                   <Input
                     key={index}
@@ -123,6 +144,7 @@ export default function VerifyOTPPage() {
                     className="w-12 h-12 text-center text-xl font-mono"
                     autoFocus={index === 0}
                     disabled={isLoading}
+                    ref={(el) => { inputRefs.current[index] = el; }}
                   />
                 ))}
               </div>
@@ -176,11 +198,11 @@ export default function VerifyOTPPage() {
           </form>
 
           {/* Footer */}
-          <div className="mt-6 pt-6 border-t border-gray-100">
+          {/* <div className="mt-6 pt-6 border-t border-gray-100">
             <p className="text-xs text-gray-500 text-center">
               For demo, use code: <span className="font-mono font-semibold">123456</span>
             </p>
-          </div>
+          </div> */}
         </motion.div>
       </div>
     </div>

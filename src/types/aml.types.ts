@@ -1,5 +1,3 @@
-// src/types/aml.types.ts
-
 export type EntityType = 'individual' | 'organization';
 
 export interface AmlIndividualRequest {
@@ -11,7 +9,7 @@ export interface AmlIndividualRequest {
 }
 
 export interface AmlOrganizationRequest {
-  name: string;
+  names: string;
   schema: 'organization';
   registration_number?: string;
   country?: string;
