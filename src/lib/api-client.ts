@@ -1,10 +1,13 @@
-import axios from 'axios';
+import type { AxiosRequestConfig } from 'axios';
+import { api } from './axios-client';
 
-const BACKEND_URL = process.env.BACKEND_API_URL;
-
-export const serverAxios = axios.create({
-  baseURL: BACKEND_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+export async function apiClient<T>(
+  endpoint: string,
+  options: AxiosRequestConfig = {}
+): Promise<T> {
+  const response = await api.request<T>({
+    url: endpoint,
+    ...options,
+  });
+  return response.data;
+}

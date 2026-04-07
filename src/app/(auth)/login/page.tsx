@@ -1,17 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useLogin } from "@/hooks/auth/useAuth";
 import { motion } from "framer-motion";
-import { 
-  Shield, 
-  Eye, 
-  EyeOff, 
-  ArrowRight, 
+import {
+  Shield,
+  Eye,
+  EyeOff,
+  ArrowRight,
   Sparkles,
   Mail,
   Lock,
-  Fingerprint
+  Fingerprint,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,25 +19,19 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 
 export default function LoginPage() {
-  const router = useRouter();
+  const loginMutation = useLogin();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsLoading(true);
-    
-    // Mock authentication
-    setTimeout(() => {
-      if (email && password) {
-        router.push("/dashboard");
-      }
-      setIsLoading(false);
-    }, 1500);
+    loginMutation.mutate({ email, password });
   };
+
+  const isLoading = loginMutation.isPending;
+  const error = loginMutation.error?.message;
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-linear-to-br from-gray-50 via-white to-teal-50">
@@ -46,8 +40,6 @@ export default function LoginPage() {
         <div className="absolute top-0 -left-4 w-96 h-96 bg-teal-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
         <div className="absolute top-0 -right-4 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
         <div className="absolute -bottom-8 left-20 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
-        
-        {/* Grid Pattern */}
         <div className="absolute inset-0 pattern-bg"></div>
       </div>
 
@@ -59,13 +51,12 @@ export default function LoginPage() {
           transition={{ duration: 0.5 }}
           className="w-full max-w-md"
         >
-          {/* Card - Removed the glow effect */}
           <div className="relative">
             <div className="relative bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-gray-100">
               {/* Decorative Elements */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-teal-100 to-teal-50 rounded-full blur-2xl -z-10"></div>
               <div className="absolute bottom-0 left-0 w-32 h-32 bg-linear-to-tr from-purple-100 to-purple-50 rounded-full blur-2xl -z-10"></div>
-              
+
               {/* Logo */}
               <motion.div
                 initial={{ scale: 0 }}
@@ -79,7 +70,11 @@ export default function LoginPage() {
                   </div>
                   <motion.div
                     animate={{ rotate: 360 }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                    transition={{
+                      duration: 20,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
                     className="absolute -top-1 -right-1"
                   >
                     <Sparkles className="w-4 h-4 text-yellow-500" />
@@ -137,7 +132,10 @@ export default function LoginPage() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.4 }}
                 >
-                  <Label htmlFor="password" className="text-gray-700 font-medium">
+                  <Label
+                    htmlFor="password"
+                    className="text-gray-700 font-medium"
+                  >
                     Password
                   </Label>
                   <div className="relative mt-2">
@@ -198,6 +196,16 @@ export default function LoginPage() {
                   </a>
                 </motion.div>
 
+                {error && (
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="text-sm text-red-600 text-center"
+                  >
+                    {error}
+                  </motion.p>
+                )}
+
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -238,7 +246,6 @@ export default function LoginPage() {
                     <span className="px-4 bg-white text-gray-500">Or</span>
                   </div>
                 </div>
-
                 <button
                   className="mt-4 w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition group"
                   disabled={isLoading}
@@ -258,7 +265,11 @@ export default function LoginPage() {
                 className="mt-6 p-4 bg-linear-to-r from-gray-50 to-teal-50 rounded-xl border border-gray-100"
               >
                 <p className="text-xs text-gray-600 text-center">
-                  🔐 Demo credentials: <span className="font-mono font-semibold">admin@verifyhub.com</span> / any password
+                  🔐 Demo credentials:{" "}
+                  <span className="font-mono font-semibold">
+                    admin@verifyhub.com
+                  </span>{" "}
+                  / any password
                 </p>
               </motion.div>
             </div>

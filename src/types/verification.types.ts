@@ -9,7 +9,6 @@ export interface VerificationLog {
     | "BVN Verification"
     | "BVN Retrieval with Phone"
     | "CAC Verification";
-  cost: number;
   status: "success" | "failed";
   reference: string;
   details?: Record<string, any>;

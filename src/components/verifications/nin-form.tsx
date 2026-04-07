@@ -14,57 +14,44 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 
 interface NinFormProps {
   onSubmit: (nin: string) => void
   isLoading: boolean
   onReset: () => void
+  error?: string // optional external error
 }
 
-export function NinForm({ onSubmit, isLoading, onReset }: NinFormProps) {
+export function NinForm({ onSubmit, isLoading, onReset, error: externalError }: NinFormProps) {
   const [nin, setNin] = useState('')
   const [consent, setConsent] = useState(false)
   const [error, setError] = useState('')
   const [isValid, setIsValid] = useState(false)
 
-  const validateNIN = (value: string) => {
-    // Remove non-digits
-    const cleaned = value.replace(/\D/g, '')
-    
-    if (cleaned.length === 0) {
-      setError('')
-      setIsValid(false)
-      return
-    }
-    
-    if (cleaned.length !== 11) {
-      setError('NIN must be 11 digits')
-      setIsValid(false)
-    } else {
-      setError('')
-      setIsValid(true)
-    }
-    
-    // Auto-format: 12345678901 -> 1234-5678-901
-    if (cleaned.length <= 4) {
-      return cleaned
-    } else if (cleaned.length <= 8) {
-      return `${cleaned.slice(0, 4)}-${cleaned.slice(4)}`
-    } else {
-      return `${cleaned.slice(0, 4)}-${cleaned.slice(4, 8)}-${cleaned.slice(8, 11)}`
-    }
-  }
-
+  // Only allow digits, max 11
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = validateNIN(e.target.value)
-    setNin(formatted || e.target.value)
+    const raw = e.target.value.replace(/\D/g, '') // remove non-digits
+    if (raw.length <= 11) {
+      setNin(raw)
+      // Validate on every change
+      if (raw.length === 11) {
+        setError('')
+        setIsValid(true)
+      } else {
+        if (raw.length > 0) {
+          setError(`NIN must be 11 digits (${raw.length}/11)`)
+        } else {
+          setError('')
+        }
+        setIsValid(false)
+      }
+    }
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!isValid) {
+    if (nin.length !== 11) {
       setError('Please enter a valid 11-digit NIN')
       return
     }
@@ -74,8 +61,7 @@ export function NinForm({ onSubmit, isLoading, onReset }: NinFormProps) {
       return
     }
     
-    const cleanNIN = nin.replace(/\D/g, '')
-    onSubmit(cleanNIN)
+    onSubmit(nin) // nin is already clean digits
   }
 
   const handleReset = () => {
@@ -85,6 +71,8 @@ export function NinForm({ onSubmit, isLoading, onReset }: NinFormProps) {
     setIsValid(false)
     onReset()
   }
+
+  const displayError = externalError || error
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -97,24 +85,25 @@ export function NinForm({ onSubmit, isLoading, onReset }: NinFormProps) {
       {/* NIN Input */}
       <div>
         <Label htmlFor="nin" className="text-gray-700 font-medium">
-          National Identity Number
+          National Identity Number (11 digits)
         </Label>
         <div className="relative mt-2">
           <Input
             id="nin"
             type="text"
-            placeholder="1234-5678-901"
+            inputMode="numeric"
+            placeholder="12345678901"
             value={nin}
             onChange={handleChange}
             disabled={isLoading}
             className={`
               pl-10 font-mono text-lg tracking-wider
-              ${error ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 focus:border-teal-500 focus:ring-teal-500'}
+              ${displayError ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 focus:border-teal-500 focus:ring-teal-500'}
             `}
-            maxLength={14} // 11 digits + 2 hyphens
+            maxLength={11}
           />
           <Fingerprint className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-          {isValid && !error && (
+          {isValid && !displayError && (
             <CheckCircle2 className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-green-500" />
           )}
         </div>
@@ -122,12 +111,12 @@ export function NinForm({ onSubmit, isLoading, onReset }: NinFormProps) {
         {/* Character counter */}
         <div className="flex justify-between mt-1">
           <p className="text-xs text-gray-500">
-            {nin.replace(/\D/g, '').length}/11 digits
+            {nin.length}/11 digits
           </p>
-          {error && (
+          {displayError && (
             <p className="text-xs text-red-500 flex items-center gap-1">
               <AlertCircle className="w-3 h-3" />
-              {error}
+              {displayError}
             </p>
           )}
         </div>
@@ -153,7 +142,7 @@ export function NinForm({ onSubmit, isLoading, onReset }: NinFormProps) {
           checked={consent}
           onCheckedChange={(checked) => setConsent(checked as boolean)}
           disabled={isLoading}
-          className="mt-0.5"
+          className="mt-0.5 border"
         />
         <Label htmlFor="consent" className="text-sm text-gray-600 cursor-pointer leading-relaxed">
           I confirm that I have obtained proper consent from the NIN owner to verify their identity.
@@ -165,7 +154,7 @@ export function NinForm({ onSubmit, isLoading, onReset }: NinFormProps) {
       <div className="flex gap-3 pt-4">
         <Button
           type="submit"
-          disabled={isLoading || !nin || !consent}
+          disabled={isLoading || nin.length !== 11 || !consent}
           className="flex-1 bg-linear-to-r from-teal-600 to-teal-500 hover:from-teal-700 hover:to-teal-600 text-white"
         >
           {isLoading ? (

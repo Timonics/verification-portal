@@ -197,7 +197,7 @@ export default function LandingPage() {
                       {
                         icon: Zap,
                         title: "PEP & AML Screening",
-                        price: "Coming Soon",
+                        price: "",
                         color: "purple",
                         delay: 0.2,
                       },
@@ -256,7 +256,7 @@ export default function LandingPage() {
       </section>
 
       {/* Trust Badges */}
-      <motion.section
+      {/* <motion.section
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.6 }}
@@ -286,7 +286,7 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
-      </motion.section>
+      </motion.section> */}
 
       {/* Stats Section */}
       {/* <section className="py-20">
@@ -546,13 +546,15 @@ export default function LandingPage() {
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
-              <Button
-                size="lg"
-                variant="outline"
-                className="text-black bg-teal-400 hover:bg-teal-500 rounded-full text-lg"
-              >
-                Contact
-              </Button>
+              <Link href="contact">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="text-black bg-teal-400 hover:bg-teal-500 rounded-full text-lg"
+                >
+                  Contact
+                </Button>
+              </Link>
             </div>
           </motion.div>
         </div>
@@ -625,7 +627,7 @@ export default function LandingPage() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="hover:text-white transition">
+                  <Link href="contact" className="hover:text-white transition">
                     Contact
                   </Link>
                 </li>

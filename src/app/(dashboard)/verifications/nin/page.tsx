@@ -1,63 +1,46 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Shield, 
-  Lock, 
-  CheckCircle, 
-  XCircle,
-  User,
-  Calendar,
-  Phone,
-  Fingerprint,
-  FileText,
-  Copy,
-  Eye,
-  AlertCircle,
-  ArrowRight
-} from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { NinForm } from '@/components/verifications/nin-form'
-import { ResultCard } from '@/components/verifications/result-cards'
-import { SecurityBadges } from '@/components/verifications/security-badges'
-
+import { useNinVerification } from '@/hooks/useNINVerification';
+import { NinForm } from '@/components/verifications/nin-form';
+import { ResultCard } from '@/components/verifications/result-cards';
+import { SecurityBadges } from '@/components/verifications/security-badges';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Shield, Fingerprint } from 'lucide-react';
+import { useState } from 'react';
 
 export default function NINVerificationPage() {
-  const [verificationResult, setVerificationResult] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const { mutate, isPending, data, error } = useNinVerification();
+  const [submittedNin, setSubmittedNin] = useState<string>('');
 
-  const handleVerify = async (nin: string) => {
-    setIsLoading(true)
-    
-    // Mock API call
-    setTimeout(() => {
-      // Mock success response
-      setVerificationResult({
-        success: true,
-        data: {
-          nin: nin,
-          fullName: "Oluwaseun Adekunle",
-          dateOfBirth: "1990-05-15",
-          phoneNumber: "08012345678",
-          photo: null,
-          status: "valid",
-          reference: `NIN_${Date.now()}`,
-          verifiedAt: new Date()
-        }
-      })
-      setIsLoading(false)
-    }, 2000)
-  }
+  const handleVerify = (nin: string) => {
+    setSubmittedNin(nin);
+    mutate(nin);
+  };
 
   const handleReset = () => {
-    setVerificationResult(null)
-  }
+    // Clear result – will be handled by re‑rendering when new mutation starts
+  };
+
+  // Transform API response to match ResultCard props
+  const verificationResult = data?.success && data?.data
+    ? {
+        success: true,
+        data: {
+          nin: submittedNin,
+          fullName: data.data.middle_name
+            ? `${data.data.first_name} ${data.data.middle_name} ${data.data.last_name}`
+            : `${data.data.first_name} ${data.data.last_name}`,
+          dateOfBirth: data.data.date_of_birth,
+          phoneNumber: data.data.phone_number,
+          photo: data.data.photo,
+          status: 'valid',
+          reference: `NIN_${Date.now()}`,
+          verifiedAt: new Date(),
+        },
+      }
+    : null;
+
+  const isLoading = isPending;
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -78,25 +61,22 @@ export default function NINVerificationPage() {
         </p>
       </motion.div>
 
-      {/* Security Badges */}
       <SecurityBadges />
 
-      {/* Main Content */}
       <div className="grid lg:grid-cols-2 gap-8">
-        {/* Form Section */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <NinForm 
-            onSubmit={handleVerify} 
+          <NinForm
+            onSubmit={handleVerify}
             isLoading={isLoading}
             onReset={handleReset}
+            // error={error?.message}
           />
         </motion.div>
 
-        {/* Result Section */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -111,12 +91,8 @@ export default function NINVerificationPage() {
                   <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                     <Shield className="w-10 h-10 text-gray-400" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    Ready to Verify
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    Enter a valid NIN to see verification results
-                  </p>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Ready to Verify</h3>
+                  <p className="text-sm text-gray-500">Enter a valid NIN to see verification results</p>
                 </div>
               </div>
             )}
@@ -124,5 +100,5 @@ export default function NINVerificationPage() {
         </motion.div>
       </div>
     </div>
-  )
+  );
 }

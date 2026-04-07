@@ -41,12 +41,12 @@ const actions = [
     price: '₦150'
   },
   {
-    title: 'PEP Screening',
-    description: 'Politically Exposed Persons',
+    title: 'AML Screening',
+    description: 'Anti-Money Laundering Screening',
     icon: AlertTriangle,
-    href: '/pep',
+    href: '/verifications/aml',
     color: 'orange',
-    comingSoon: true
+    comingSoon: false
   }
 ]
 

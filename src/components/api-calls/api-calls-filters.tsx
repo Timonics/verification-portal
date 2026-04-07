@@ -40,7 +40,7 @@ const statuses = [
   { value: 'failed', label: 'Failed', color: 'red' }
 ]
 
-interface LogsFiltersProps {
+interface ApiCallsFiltersProps {
   filters: {
     service: string
     status: string
@@ -51,7 +51,7 @@ interface LogsFiltersProps {
   onClearFilters: () => void
 }
 
-export function LogsFilters({ filters, onFiltersChange, onClearFilters }: LogsFiltersProps) {
+export function ApiCallsFilters({ filters, onFiltersChange, onClearFilters }: ApiCallsFiltersProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const activeFiltersCount = [

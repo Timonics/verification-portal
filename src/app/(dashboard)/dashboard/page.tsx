@@ -63,7 +63,7 @@ export default function DashboardPage() {
 
       {/* Summary Cards - 6 cards in 2 rows */}
       <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <SummaryCard
             title="Total Verifications"
             value={stats.totalVerificationsToday}
@@ -91,7 +91,7 @@ export default function DashboardPage() {
             description="Today"
             subtitle="vs yesterday"
           />
-          <SummaryCard
+          {/* <SummaryCard
             title="Total Spend"
             value={`₦${stats.totalSpend.toLocaleString()}`}
             change={15}
@@ -99,7 +99,7 @@ export default function DashboardPage() {
             icon={TrendingUp}
             description="This month"
             subtitle="₦3,250 remaining"
-          />
+          /> */}
         </div>
 
         {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

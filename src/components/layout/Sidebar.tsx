@@ -6,14 +6,15 @@ import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   ShieldCheck,
-  Scale,
   FileText,
   Settings,
   ChevronDown,
   UserCheck,
   Building2,
-  AlertTriangle,
   BarChart3,
+  File,
+  Phone,
+  Zap,
 } from "lucide-react";
 import { useState } from "react";
 import { Url } from "next/dist/shared/lib/router/router";
@@ -38,47 +39,48 @@ const navigation: NavItem[] = [
     children: [
       { name: "NIN Verification", href: "/verifications/nin", icon: UserCheck },
       {
-        name: "NIN with Phone",
+        name: "Retrieve NIN with Phone",
         href: "/verifications/nin-phone",
-        icon: UserCheck,
+        icon: Phone,
       },
       { name: "BVN Verification", href: "/verifications/bvn", icon: UserCheck },
       {
-        name: "BVN Retrieval with Phone",
-        href: "/verifications/bvn-phone",
-        icon: UserCheck,
+        name: "Upload for NIN",
+        href: "/verifications/upload-nin",
+        icon: File,
       },
       { name: "CAC Verification", href: "/verifications/cac", icon: Building2 },
-    ],
-  },
-  {
-    name: "Compliance",
-    icon: Scale,
-    children: [
-      {
-        name: "PEP Screening",
-        href: "/pep",
-        icon: AlertTriangle,
-        comingSoon: false,
-      },
+      // {
+      //   name: "PEP Screening",
+      //   href: "/verifications/pep",
+      //   icon: AlertTriangle,
+      //   comingSoon: false,
+      // },
       {
         name: "AML Screening",
-        href: "/aml",
+        href: "/verifications/aml",
         icon: BarChart3,
         comingSoon: false,
       },
     ],
+  },
+  // {
+  //   name: "Compliance",
+  //   icon: Scale,
+  //   children: [
+
+  //   ],
+  // },
+  {
+    name: "API Calls",
+    href: "/api-calls",
+    icon: Zap,
   },
   {
     name: "Logs",
     href: "/logs",
     icon: FileText,
   },
-  // {
-  //   name: "Settings",
-  //   href: "/settings",
-  //   icon: Settings,
-  // },
 ];
 
 export function Sidebar() {

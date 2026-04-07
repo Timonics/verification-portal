@@ -1,13 +1,12 @@
 import { VerificationLog, SummaryStats } from "@/types/verification.types";
 
-export const mockLogs: VerificationLog[] = [
+export const ApiCalls = [
   {
     id: '1',
     appName: 'Insurance Onboarding App',
     userIdentifier: 'user_12345',
     dateTime: new Date('2026-03-27T15:26:00'),
     service: 'NIN Verification',
-    cost: 80,
     status: 'success',
     reference: 'NIN_REF_001',
     details: {
@@ -22,7 +21,6 @@ export const mockLogs: VerificationLog[] = [
     userIdentifier: 'user_12346',
     dateTime: new Date('2026-03-27T15:19:00'),
     service: 'BVN Verification',
-    cost: 50,
     status: 'success',
     reference: 'BVN_REF_002',
     details: {
@@ -38,7 +36,6 @@ export const mockLogs: VerificationLog[] = [
     userIdentifier: 'user_12347',
     dateTime: new Date('2026-03-27T15:19:00'),
     service: 'BVN Verification',
-    cost: 30,
     status: 'failed',
     reference: 'BVN_REF_003',
     details: {
@@ -51,7 +48,6 @@ export const mockLogs: VerificationLog[] = [
     userIdentifier: 'user_12348',
     dateTime: new Date('2026-03-27T14:30:00'),
     service: 'NIN with Phone',
-    cost: 80,
     status: 'success',
     reference: 'NIN_PHONE_004',
     details: {
@@ -67,7 +63,6 @@ export const mockLogs: VerificationLog[] = [
     userIdentifier: 'user_12349',
     dateTime: new Date('2026-03-27T13:45:00'),
     service: 'CAC Verification',
-    cost: 150,
     status: 'success',
     reference: 'CAC_005',
     details: {
@@ -82,7 +77,6 @@ export const mockLogs: VerificationLog[] = [
     userIdentifier: 'user_12350',
     dateTime: new Date('2026-03-27T12:15:00'),
     service: 'BVN Retrieval with Phone',
-    cost: 30,
     status: 'success',
     reference: 'BVN_RET_006',
     details: {
@@ -97,7 +91,6 @@ export const mockLogs: VerificationLog[] = [
     userIdentifier: 'user_12351',
     dateTime: new Date('2026-03-27T11:00:00'),
     service: 'NIN Verification',
-    cost: 80,
     status: 'failed',
     reference: 'NIN_007',
     details: {
@@ -110,7 +103,6 @@ export const mockLogs: VerificationLog[] = [
     userIdentifier: 'user_12352',
     dateTime: new Date('2026-03-27T10:30:00'),
     service: 'NIN with Phone',
-    cost: 80,
     status: 'success',
     reference: 'NIN_PHONE_008',
     details: {
@@ -129,4 +121,4 @@ export const mockStats: SummaryStats = {
   totalSpend: 4250,
 };
 
-export const mockRecentActivity = mockLogs.slice(0, 5);
+export const mockRecentActivity = ApiCalls.slice(0, 5);
