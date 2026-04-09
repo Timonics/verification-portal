@@ -8,6 +8,8 @@ import { Shield, Smartphone, ArrowRight, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Image from "next/image";
+import logo from "../../../../public/logo.png";
 
 export default function VerifyOTPPage() {
   const router = useRouter();
@@ -101,6 +103,7 @@ export default function VerifyOTPPage() {
           {/* Logo */}
           <div className="flex justify-center mb-6">
             <div className="flex items-center space-x-2">
+              <Image src={logo} alt="VerifyHub Logo" width={40} height={40} />
               <Shield className="w-10 h-10 text-teal-600" />
               <span className="text-2xl font-bold text-gray-900">VerifyHub</span>
             </div>
