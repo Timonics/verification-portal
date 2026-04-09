@@ -7,7 +7,6 @@ import {
   LayoutDashboard,
   ShieldCheck,
   FileText,
-  Settings,
   ChevronDown,
   UserCheck,
   Building2,
@@ -18,6 +17,8 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { Url } from "next/dist/shared/lib/router/router";
+import Image from "next/image";
+import logo from "../../../public/logo.png";
 
 interface NavItem {
   name: string;
@@ -101,7 +102,7 @@ export function Sidebar() {
         {/* Logo */}
         <div className="flex items-center h-16 px-6 border-b border-gray-200">
           <div className="flex items-center space-x-2">
-            <ShieldCheck className="w-8 h-8 text-secondary" />
+<Image src={logo} alt="VerifyHub Logo" width={40} height={40} />
             <span className="text-xl font-bold text-primary">VerifyHub</span>
           </div>
         </div>

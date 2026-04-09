@@ -16,7 +16,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+import Image from "next/image";
+import logo from "../../../../public/logo.png";
 
 export default function LoginPage() {
   const loginMutation = useLogin();
@@ -65,8 +66,13 @@ export default function LoginPage() {
                 className="flex justify-center mb-8"
               >
                 <div className="relative">
-                  <div className="relative bg-linear-to-r from-teal-600 to-teal-500 rounded-2xl p-4 shadow-lg">
-                    <Shield className="w-10 h-10 text-white" />
+                  <div className="relative bg-linear-to-r from-teal-500 to-teal-400 rounded-2xl p-4 shadow-lg">
+                    <Image
+                      src={logo}
+                      alt="VerifyHub Logo"
+                      width={40}
+                      height={40}
+                    />
                   </div>
                   <motion.div
                     animate={{ rotate: 360 }}

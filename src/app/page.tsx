@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
 import {
@@ -28,6 +29,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { features, services } from "@/lib/data";
+import logo from "../../public/logo.png";
 
 export default function LandingPage() {
   const heroRef = useRef(null);
@@ -63,8 +65,7 @@ export default function LandingPage() {
               className="flex items-center space-x-2 cursor-pointer"
             >
               <div className="relative">
-                <Shield className="w-8 h-8 text-teal-600" />
-                <Sparkles className="w-3 h-3 text-yellow-500 absolute -top-1 -right-1" />
+                <Image src={logo} alt="VerifyHub Logo" width={40} height={40} />
               </div>
               <span className="text-xl font-bold bg-linear-to-r from-teal-600 to-teal-500 bg-clip-text text-transparent">
                 VerifyHub
@@ -566,7 +567,7 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <Shield className="w-6 h-6 text-teal-500" />
+                <Image src={logo} alt="VerifyHub Logo" width={40} height={40} />
                 <span className="text-white font-bold text-xl">VerifyHub</span>
               </div>
               <p className="text-sm leading-relaxed">
