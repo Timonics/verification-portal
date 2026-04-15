@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useVerify2FA, useResend2FA } from "@/hooks/auth/useAuth";
 import { motion } from "framer-motion";
-import { Shield, Smartphone, ArrowRight, AlertCircle } from "lucide-react";
+import { Smartphone, ArrowRight, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -90,7 +90,8 @@ export default function VerifyOTPPage() {
   };
 
   const isLoading = verify2FAMutation.isPending || resend2FAMutation.isPending;
-  const error = verify2FAMutation.error?.message || resend2FAMutation.error?.message;
+  const error =
+    verify2FAMutation.error?.message || resend2FAMutation.error?.message;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-gray-50 to-teal-50">
@@ -104,8 +105,9 @@ export default function VerifyOTPPage() {
           <div className="flex justify-center mb-6">
             <div className="flex items-center space-x-2">
               <Image src={logo} alt="VerifyHub Logo" width={40} height={40} />
-              <Shield className="w-10 h-10 text-teal-600" />
-              <span className="text-2xl font-bold text-gray-900">VerifyHub</span>
+              <span className="text-2xl font-bold text-gray-900">
+                VerifyHub
+              </span>
             </div>
           </div>
 
@@ -130,10 +132,7 @@ export default function VerifyOTPPage() {
               <Label className="text-center block mb-3 text-gray-700">
                 Enter 6-digit code
               </Label>
-              <div
-                className="flex justify-center gap-2"
-                onPaste={handlePaste}
-              >
+              <div className="flex justify-center gap-2" onPaste={handlePaste}>
                 {otp.map((digit, index) => (
                   <Input
                     key={index}
@@ -147,7 +146,9 @@ export default function VerifyOTPPage() {
                     className="w-12 h-12 text-center text-xl font-mono"
                     autoFocus={index === 0}
                     disabled={isLoading}
-                    ref={(el) => { inputRefs.current[index] = el; }}
+                    ref={(el) => {
+                      inputRefs.current[index] = el;
+                    }}
                   />
                 ))}
               </div>
@@ -193,8 +194,8 @@ export default function VerifyOTPPage() {
                   {resend2FAMutation.isPending
                     ? "Sending..."
                     : canResend
-                    ? "Resend code"
-                    : `Resend in ${timeLeft}s`}
+                      ? "Resend code"
+                      : `Resend in ${timeLeft}s`}
                 </button>
               </p>
             </div>

@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { useNinVerification } from '@/hooks/useNINVerification';
-import { NinForm } from '@/components/verifications/nin-form';
-import { ResultCard } from '@/components/verifications/result-cards';
-import { SecurityBadges } from '@/components/verifications/security-badges';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, Fingerprint } from 'lucide-react';
-import { useState } from 'react';
+import { useNinVerification } from "@/hooks/useNINVerification";
+import { NinForm } from "@/components/verifications/nin-form";
+import { ResultCard } from "@/components/verifications/result-cards";
+import { SecurityBadges } from "@/components/verifications/security-badges";
+import { motion, AnimatePresence } from "framer-motion";
+import { Shield, Fingerprint } from "lucide-react";
+import { useState } from "react";
 
 export default function NINVerificationPage() {
   const { mutate, isPending, data, error } = useNinVerification();
-  const [submittedNin, setSubmittedNin] = useState<string>('');
+  const [submittedNin, setSubmittedNin] = useState<string>("");
 
   const handleVerify = (nin: string) => {
     setSubmittedNin(nin);
@@ -22,23 +22,24 @@ export default function NINVerificationPage() {
   };
 
   // Transform API response to match ResultCard props
-  const verificationResult = data?.success && data?.data
-    ? {
-        success: true,
-        data: {
-          nin: submittedNin,
-          fullName: data.data.middle_name
-            ? `${data.data.first_name} ${data.data.middle_name} ${data.data.last_name}`
-            : `${data.data.first_name} ${data.data.last_name}`,
-          dateOfBirth: data.data.date_of_birth,
-          phoneNumber: data.data.phone_number,
-          photo: data.data.photo,
-          status: 'valid',
-          reference: `NIN_${Date.now()}`,
-          verifiedAt: new Date(),
-        },
-      }
-    : null;
+  const verificationResult =
+    data?.success && data?.data
+      ? {
+          success: true,
+          data: {
+            nin: submittedNin,
+            firstName: data.data.first_name,
+            middleName: data.data.middle_name,
+            lastName: data.data.last_name,
+            dateOfBirth: data.data.date_of_birth,
+            phoneNumber: data.data.phone_number,
+            photo: data.data.photo,
+            status: "valid",
+            reference: `NIN_${Date.now()}`,
+            verifiedAt: new Date(),
+          },
+        }
+      : null;
 
   const isLoading = isPending;
 
@@ -57,7 +58,8 @@ export default function NINVerificationPage() {
           <h1 className="text-2xl font-bold text-gray-900">NIN Verification</h1>
         </div>
         <p className="text-gray-600">
-          Verify National Identity Number (NIN) instantly. Get full name, date of birth, and phone number.
+          Verify National Identity Number (NIN) instantly. Get full name, date
+          of birth, and phone number.
         </p>
       </motion.div>
 
@@ -91,8 +93,12 @@ export default function NINVerificationPage() {
                   <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                     <Shield className="w-10 h-10 text-gray-400" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Ready to Verify</h3>
-                  <p className="text-sm text-gray-500">Enter a valid NIN to see verification results</p>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Ready to Verify
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Enter a valid NIN to see verification results
+                  </p>
                 </div>
               </div>
             )}

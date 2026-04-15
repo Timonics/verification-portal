@@ -11,7 +11,8 @@ import {
   Copy,
   Check,
   FileText,
-  Clock
+  Clock,
+  UserRound
 } from 'lucide-react'
 import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
@@ -85,10 +86,28 @@ export function ResultCard({ result }: ResultCardProps) {
         <div className="space-y-3">
           <div className="flex items-center justify-between py-2 border-b border-gray-100">
             <div className="flex items-center gap-2">
-              <User className="w-4 h-4 text-gray-400" />
-              <span className="text-sm text-gray-600">Full Name</span>
+              <UserRound className="w-4 h-4 text-gray-400" />
+              <span className="text-sm text-gray-600">First Name</span>
             </div>
-            <span className="font-medium text-gray-900">{data.fullName}</span>
+            <span className="font-medium text-gray-900">{data.firstName}</span>
+          </div>
+
+          {data.middleName && (
+            <div className="flex items-center justify-between py-2 border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <UserRound className="w-4 h-4 text-gray-400" />
+                <span className="text-sm text-gray-600">Middle Name</span>
+              </div>
+              <span className="font-medium text-gray-900">{data.middleName}</span>
+            </div>
+          )}
+
+          <div className="flex items-center justify-between py-2 border-b border-gray-100">
+            <div className="flex items-center gap-2">
+              <UserRound className="w-4 h-4 text-gray-400" />
+              <span className="text-sm text-gray-600">Last Name</span>
+            </div>
+            <span className="font-medium text-gray-900">{data.lastName}</span>
           </div>
 
           <div className="flex items-center justify-between py-2 border-b border-gray-100">
