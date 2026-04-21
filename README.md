@@ -1,4 +1,3 @@
-```markdown
 # VerifyHub – Identity & Compliance Verification Portal
 
 **VerifyHub** is a modern, admin dashboard for verifying Nigerian identity records (NIN, BVN, CAC) and performing AML/PEP screenings. Built with Next.js 14, TypeScript, Tailwind CSS, and integrated with a backend API that provides real‑time verification, 2FA, and audit logging.
@@ -141,4 +140,3 @@ This project was developed by a team of two:
 
 - [shadcn/ui](https://ui.shadcn.com/) for accessible components
 - [Lucide](https://lucide.dev/) for icons
-```
