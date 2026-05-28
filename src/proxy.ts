@@ -17,7 +17,6 @@ const publicRoutes: RegExp[] = [
   /^\/contact$/,
 ];
 
-// Bypass static assets and API routes (API routes handle their own auth)
 const bypassRoutes: RegExp[] = [
   /^\/_next\//,
   /^\/api\//,
