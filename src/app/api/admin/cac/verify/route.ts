@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     // callBackend automatically reads the auth_token cookie and adds Authorization header
     const result = await callBackend({
       method: 'GET',
-      path: '/admin/cac/verify',
+      path: '/verifications/cac',
       params: { rc_number, company_type },
       authType: 'admin', // tells callBackend to require a token
     });

@@ -9,6 +9,8 @@ export interface LoginResponse {
   data: {
     requires_2fa: boolean;
     session_token?: string;
+    token?: string;
+    access_token?: string;
     user?: {
       id: number;
       email: string;

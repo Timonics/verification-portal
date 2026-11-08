@@ -1,11 +1,12 @@
-import { apiClient } from '@/lib/api-client';
-import type { BvnVerificationRequest, BvnVerificationResponse } from '@/types/bvn.types';
+import { internalApi } from '@/lib/internal-api-client';
+import type { BvnVerificationResponse } from '@/types/bvn.types';
 
 export const bvnService = {
-  async verifyBVN(data: BvnVerificationRequest): Promise<BvnVerificationResponse> {
-   return await apiClient<BvnVerificationResponse>('/public/bvn/verify', {
-    method: 'POST',
-    data,
-   });
+  async verifyBVN(bvn: string): Promise<BvnVerificationResponse> {
+    const res = await internalApi.post<BvnVerificationResponse>(
+      '/api/verifications/bvn',
+      { bvn },
+    );
+    return res.data;
   },
 };

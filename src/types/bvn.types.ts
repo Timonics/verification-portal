@@ -1,5 +1,5 @@
 export interface BvnVerificationRequest {
-  encrypted_bvn: string;
+  bvn: string;
 }
 
 export interface BvnVerificationResponse {

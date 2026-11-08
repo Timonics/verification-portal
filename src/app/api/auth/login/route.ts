@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { authService } from "@/services/auth.service";
-import { setSessionToken } from "@/lib/cookies";
+import { setAuthToken, setSessionToken } from "@/lib/cookies";
 
 export async function POST(req: NextRequest) {
   try {
@@ -36,10 +36,16 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Backend may return an auth token directly (no 2FA step)
+    const token = responseData.token ?? responseData.access_token;
+    if (token) {
+      await setAuthToken(token);
+    }
+
     return NextResponse.json({
       success: true,
       requires_2fa: false,
-      user: response.data.user,
+      user: responseData.user,
     });
   } catch (error: any) {
     console.error("Login error:", error);

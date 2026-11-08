@@ -20,7 +20,7 @@ export const authService = {
     code: string,
     sessionToken: string,
   ): Promise<Verify2FAResponse> {
-    return apiClient<Verify2FAResponse>("/auth/verify-2fa", {
+    return apiClient<Verify2FAResponse>("/auth/two-factor/verify", {
       method: "POST",
       data: { email, code, session_token: sessionToken } as Verify2FARequest,
     });
@@ -31,7 +31,7 @@ export const authService = {
     sessionToken: string,
   ): Promise<{ success: boolean; message: string }> {
     return apiClient<{ success: boolean; message: string }>(
-      "/auth/resend-2fa-code",
+      "/auth/two-factor/resend",
       {
         method: "POST",
         data: { email, session_token: sessionToken } as Resend2FARequest,

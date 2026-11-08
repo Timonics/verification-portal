@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import axios, { AxiosRequestConfig, Method } from 'axios';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://empdata.josbiz.com/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://api.verifyhub.ng/api/v1';
 
 export interface BackendCallOptions {
   method: Method;

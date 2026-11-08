@@ -16,6 +16,7 @@ export function useUser() {
 
 export function useLogin() {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: authApi.login,
@@ -47,6 +48,19 @@ export function useLogin() {
           // IMPORTANT: Return here to prevent further execution
           return;
         }
+
+        // Login completed without 2FA — establish session and go to dashboard
+        if (data.user) {
+          queryClient.setQueryData(authKeys.user(), data.user);
+          localStorage.setItem("user-data", JSON.stringify(data.user));
+          localStorage.setItem("user-role", data.user.roles?.[0] ?? "");
+        }
+
+        toast.success("Login successful", {
+          description: "Redirecting to your Dashboard...",
+        });
+
+        router.push("/dashboard");
       } else {
         toast.error("Login failed", {
           description: data.message || "Invalid credentials",

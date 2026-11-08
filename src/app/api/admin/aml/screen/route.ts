@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const result = await callBackend({
       method: "POST",
-      path: "/admin/aml/screen",
+      path: "/verifications/aml",
       data: body,
       authType: "admin",
     });

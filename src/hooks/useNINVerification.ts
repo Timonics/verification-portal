@@ -1,6 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { encryptNIN } from "@/lib/nin-encryption";
 import { ninService } from "@/services/nin.service";
 import type { NinVerificationResponse } from "@/types/nin.types";
 import { useAddActivityLog } from "./useActivityLogs";
@@ -8,10 +7,7 @@ import { useAddActivityLog } from "./useActivityLogs";
 export function useNinVerification() {
   const { mutate: addLog } = useAddActivityLog();
   return useMutation<NinVerificationResponse, Error, string>({
-    mutationFn: async (nin: string) => {
-      const encryptedNin = await encryptNIN(nin);
-      return ninService.verifyNIN(encryptedNin);
-    },
+    mutationFn: (nin: string) => ninService.verifyNIN(nin),
     onSuccess: (data) => {
       if (data.success) {
 

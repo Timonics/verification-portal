@@ -1,5 +1,5 @@
 export interface NinVerificationRequest {
-  encrypted_nin: string;
+  nin: string;
 }
 
 export interface NinVerificationResponse {
@@ -22,11 +22,6 @@ export interface NinVerificationResponse {
     residence_address: string;
     photo: string; // base64
   };
-}
-
-export interface PublicKeyResponse {
-  success: boolean;
-  public_key: string;
 }
 
 export interface NinByPhoneRequest {
